@@ -304,6 +304,178 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/11/html5的离线存储的研究（3）——cookie/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/11/html5的离线存储的研究（3）——cookie/" class="post-title-link" itemprop="http://yoursite.com/index.html">html5的离线存储的研究（3）——cookie</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-11 16:32:44 / 修改时间：16:34:41" itemprop="dateCreated datePublished" datetime="2018-12-11T16:32:44+08:00">2018-12-11</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近看了localStorage和appcache，顺带着也研究了下cookie。在localStorage和sessionStorage出来后，感觉cookie已经什么作用了，然鹅我在日常业务中也没怎么使用cookie…….，前端方面使用cookie也只有document.cookie这一个api，感觉使用起来还是简单方便。这里着重记录一下它的注意点。</p>
+<h2 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h2><ul>
+<li>会附加在每个http的请求中，无形中怎加了流量</li>
+<li>http请求中是明文传递的， 安全性成问题。（https除外）</li>
+<li>大小限制在4kb<h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><blockquote>
+<p>cookie可以跨越一个域名下的多个网页，但不能跨越多个域名使用。</p>
+</blockquote>
+</li>
+</ul>
+<p>也就是说他在<a href="http://www.a.com/index.html和www.a.com/index2.html中是可以共用的，但是在www.a.com和www.b.com下，就不行了。遵循跨域原则。" target="_blank" rel="noopener">www.a.com/index.html和www.a.com/index2.html中是可以共用的，但是在www.a.com和www.b.com下，就不行了。遵循跨域原则。</a></p>
+<blockquote>
+<p>cookie 将信息存储于用户硬盘，它最根本的用途是 Cookie 能够帮助 Web 站点保存有关访问者的信息</p>
+</blockquote>
+<p> 存储于用户硬盘，因此可以作为全局变量，这是它最大的一个优点。但是它是明文传输的，所以不要放一些敏感信息</p>
+<blockquote>
+<p>存储在cookie的数据「每次」都会被浏览器「自动」放在http请求中。</p>
+</blockquote>
+<p>浏览器有一个自主行为，就是会自动将该url下的cookie带入到request header中，这就很尴尬了，所以服务端在使用cookie的时候要时刻注意，那些有用的信息要放入，哪些无用的信息就避免放入，不然会增加带宽， 影响性能，前端上如果使用axios发送请求，在不需要带上cookie的时候，可以设置withCredentialse为true， jquery同理。</p>
+<h2 id="使用流程"><a href="#使用流程" class="headerlink" title="使用流程"></a>使用流程</h2><h4 id="1-起作用"><a href="#1-起作用" class="headerlink" title="1.起作用"></a>1.起作用</h4><p> cookie 是存在用户硬盘中，用户每次访问站点时，Web应用程序都可以读取 Cookie 包含的信息。当用户再次访问这个站点时，浏览器就会在本地硬盘上查找与该 URL 相关联的 Cookie。如果该 Cookie 存在，浏览器就将它添加到request header的Cookie字段中，与http请求一起发送到该站点。<br><img src="https://upload-images.jianshu.io/upload_images/2204576-a0843bf40e52e570.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="721543713-56fba554cad37_articlex.png"></p>
+<h4 id="2-cookie的格式"><a href="#2-cookie的格式" class="headerlink" title="2. cookie的格式"></a>2. cookie的格式</h4><p>浏览器提供了 cookie 属性给 JavaScript，因此可以通过 document.cookie 来访问这个页面中的cookie。<br><img src="https://upload-images.jianshu.io/upload_images/2204576-1f65b5714a4f2b18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="cookie的格式"></p>
+<p>这是一串字符串，仔细观察，我们可以发现规律。每个 cookie 都以名/值对的形式，即 name=value，名称和值都必须是URL编码的，且两对cookie间以分号和空格隔开。（ps：千万不要忘了空格，特别是在获取某个 cookie 时）</p>
+<p>如果手动添加几个的话就是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// document.cookie = &quot;name=value[; expires=GMTDate][; domain=domain][; path=path][; secure]&quot;</span><br><span class="line">document.cookie = &quot;test1=myCookie1;&quot;</span><br><span class="line">document.cookie = &quot;test2=myCookie2; domain=.google.com.hk; path=/webhp&quot;</span><br><span class="line">document.cookie = &quot;test3=myCookie3; domain=.google.com.hk; expires=Sat, 04 Nov 2017 16:00:00 GMT; secure&quot;</span><br><span class="line">document.cookie = &quot;test4=myCookie4; domain=.google.com.hk; max-age=10800;&quot;</span><br></pre></td></tr></table></figure></p>
+<p>domain、Path、Expries/Max-age、httponly(即HTTP选项）、Secure 等均是 cookie 的属性，</p>
+<ol>
+<li>domain、path： 指定cookie在哪些域中共享</li>
+<li>Expries/Max-age：失效时间和失效时间段， 前者规定一个gmt时间，Sat, 04 Nov 2017 16:00:00 GMT，这表明这个 cookie 将在2017-11-04的16时整失效，而后者是一个时间段，例如max-age=10800;”，也就是生效时间是3个小时， 新的http协议已经使用这个字段替换了expries</li>
+<li>secure： secure是 cookie 的安全标志，通过cookie直接包含一个secure单词来指定，也是cookie中唯一一个非名值对儿的部分。指定后，cookie只有在使用SSL连接（如HTTPS请求）时才会发送到服务器。<br>默认情况为空，不指定 secure 选项，即不论是 http 请求还是 https 请求，均会发送cookie。</li>
+<li>httponly：httponly属性是用来限制客户端脚本对cookie的访问。将 cookie 设置成 httponly 可以减轻xss攻击的危害，防止cookie被窃取，以增强cookie的安全性。（由于cookie中可能存放身份验证信息，放在cookie中容易泄露），如果设置了httponly，js是无法读取和修改 httponly cookies，当然也不能设置 cookie 为 httponly，这只能通过服务器端去设置。默认情况是不指定 httponly，即可以通过 js 去访问。</li>
+</ol>
+<h4 id="cookie编码"><a href="#cookie编码" class="headerlink" title="cookie编码"></a>cookie编码</h4><p>感觉没啥乱用，但还是记录下，简单的就是在关键value上加上encodeURIComponent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.cookie = encodeURIComponent(&quot;test&quot;) + &quot;=&quot; + encodeURIComponent(&quot;myCookie&quot;) + &quot;; max-age=3600&quot;;</span><br></pre></td></tr></table></figure></p>
+<h4 id="cookie删除，修改"><a href="#cookie删除，修改" class="headerlink" title="cookie删除，修改"></a>cookie删除，修改</h4><p>cookie的删除其实特别简单，也是对此cookie重新赋值，将expries设为一个过去的时间或将max-age设为0，都可以删除cookie。同时也要特别注意此cookie的domain、path要与原来保持一致</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/09/html5的离线存储的研究（2）——localStorage/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -353,6 +525,22 @@
             
 
             
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-10 10:14:06" itemprop="dateModified" datetime="2018-12-10T10:14:06+08:00">2018-12-10</time>
+              
+            
           </span>
 
           
@@ -385,7 +573,23 @@
       
         
           
-            
+            <p>上次研究了下appcache，很不幸，W3C准备将它废弃了，我也觉得，刚开始研究这个的时候，感觉有点烦，而且不自由。在知乎上看到贺老的一句话</p>
+<blockquote>
+<p>App cache 有许多设计缺陷，基本上是一个失败的 API。比如，标记了 manifest 的 html 本身也被缓存，而且无法清除。除非是类似游戏这样的场景，否则不推荐使用。<br>嗯，就是如此了……</p>
+</blockquote>
+<p>这次也算不上研究，整理一下自己以前用的localStorage、sessionStorage和cookie，前两个是html5新增的api，后一个则是传统的缓存技术，鉴于cookie的缺点，最大容量只支持4k，cookie基本在我现如今的业务环境中，好像没怎么用到……</p>
+<h2 id="localStorage"><a href="#localStorage" class="headerlink" title="localStorage"></a>localStorage</h2><p>扩展了cookie，4k的限制，简单地说是对cookie的优化。相对于cookie，它有以下优点：</p>
+<ul>
+<li>不会随着HTTP传输 ( cookie会随着http传输，浪费带宽 )</li>
+<li>隐私模式下无法访问……</li>
+<li>不能被爬虫爬取</li>
+<li>大小限制在500万字符左右<br>使用方法的话，主要集中在增删改查…..<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 返回一个key为token的string值</span><br><span class="line">window.localStorage.getItem(&apos;token&apos;)</span><br><span class="line"></span><br><span class="line">//新增一个值为asdasdas的token</span><br><span class="line">window.localStorage.setItem(&apos;token&apos;, &apos;asdasdas&apos;)</span><br><span class="line"></span><br><span class="line">//删除特定的值</span><br><span class="line">window.localStorage.removeItem(&apos;token&apos;)</span><br><span class="line"></span><br><span class="line">//删除全部</span><br><span class="line">window.localStorage.clear()</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="使用心得"><a href="#使用心得" class="headerlink" title="使用心得"></a>使用心得</h4><p>一般我们会将JSON存入localStorage中，但是在localStorage会自动将localStorage转换成为字符串形式，这个时候我们可以使用JSON.stringify()这个方法，来将JSON转换成为JSON字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">var storage=window.localStorage;</span><br><span class="line">            var data=&#123;</span><br><span class="line">                name:&apos;xiecanyong&apos;,</span><br><span class="line">                sex:&apos;man&apos;,</span><br><span class="line">                hobby:&apos;program&apos;</span><br><span class="line">            &#125;;</span><br><span class="line">            var d=JSON.stringify(data);</span><br><span class="line">            storage.setItem(&quot;data&quot;,d);</span><br><span class="line">            console.log(storage.data);</span><br><span class="line">// 读取之后要将JSON字符串转换成为JSON对象，使用JSON.parse()方法</span><br><span class="line">var d=JSON.stringify(data);</span><br><span class="line">            storage.setItem(&quot;data&quot;,d);</span><br><span class="line">            //将JSON字符串转换成为JSON对象输出</span><br><span class="line">            var json=storage.getItem(&quot;data&quot;);</span><br><span class="line">            var jsonObj=JSON.parse(json);</span><br><span class="line">            console.log(typeof jsonObj);</span><br></pre></td></tr></table></figure>
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><p>localStorage的使用也是遵循同源策略的，所以不同的网站直接是不能共用相同的localStorage，之前在做微信公众号平台的时候，在查看不同域的页面的缓存，localStorage一直为undefined……..</p>
+
           
         
       
@@ -829,7 +1033,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-count">4</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
