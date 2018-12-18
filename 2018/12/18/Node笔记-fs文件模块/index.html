@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="fs是filesystem的缩写，基本上就是node对于文件系统操作封装的一些api 一、文件的读写文件的读写这里面的api有readFile(),writeFile(),和readFileSync(),writeFileSync()。前者是异步，后者是同步，两种不同的情况供开发者选择。 readFile()和readFileSync()readFile用于异步读取数据，他有几个参数：    参数">
+<meta name="keywords" content="node">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node笔记--------fs文件模块">
+<meta property="og:url" content="http://yoursite.com/2018/12/18/Node笔记-fs文件模块/index.html">
+<meta property="og:site_name" content="geek720的日常">
+<meta property="og:description" content="fs是filesystem的缩写，基本上就是node对于文件系统操作封装的一些api 一、文件的读写文件的读写这里面的api有readFile(),writeFile(),和readFileSync(),writeFileSync()。前者是异步，后者是同步，两种不同的情况供开发者选择。 readFile()和readFileSync()readFile用于异步读取数据，他有几个参数：    参数">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-12-18T09:36:46.160Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node笔记--------fs文件模块">
+<meta name="twitter:description" content="fs是filesystem的缩写，基本上就是node对于文件系统操作封装的一些api 一、文件的读写文件的读写这里面的api有readFile(),writeFile(),和readFileSync(),writeFileSync()。前者是异步，后者是同步，两种不同的情况供开发者选择。 readFile()和readFileSync()readFile用于异步读取数据，他有几个参数：    参数">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/18/Node笔记-fs文件模块/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Node笔记--------fs文件模块 | geek720的日常</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geek720的日常</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">一名不愿透露姓名的程序员</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Node笔记-fs文件模块/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Node笔记--------fs文件模块
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-18 17:36:36 / 修改时间：17:36:46" itemprop="dateCreated datePublished" datetime="2018-12-18T17:36:36+08:00">2018-12-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>fs是filesystem的缩写，基本上就是node对于文件系统操作封装的一些api</p>
+<h3 id="一、文件的读写"><a href="#一、文件的读写" class="headerlink" title="一、文件的读写"></a>一、文件的读写</h3><p>文件的读写这里面的api有readFile(),writeFile(),和readFileSync(),writeFileSync()。前者是异步，后者是同步，两种不同的情况供开发者选择。</p>
+<h5 id="readFile-和readFileSync"><a href="#readFile-和readFileSync" class="headerlink" title="readFile()和readFileSync()"></a>readFile()和readFileSync()</h5><p>readFile用于异步读取数据，他有几个参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>是否必须</th>
+<th>例子</th>
+<th>作用 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件的路径</td>
+<td>是</td>
+<td>‘./image.png’</td>
+<td>可以是绝对路径，也可是相对路径，如果是相对路径，是相对于当前进程所在的路径 process.cwd(),官方文档上好像写也可以传一个buffer……还能是文件名和文件描述符（不知道是什么东西）</td>
+</tr>
+<tr>
+<td>options配置</td>
+<td>否</td>
+<td>‘utf-8’</td>
+<td>可以配置文件编码实例，默认是utf-8</td>
+</tr>
+<tr>
+<td>读取完成后的回调参数</td>
+<td>是</td>
+<td>func (err, buffer) { }</td>
+<td>该函数一参是发生错误时的错误对象，二参是代表文件内容的buffer实例</td>
+</tr>
+</tbody>
+</table>
+<p>如果，文件的路径是一个目录，会返回一个错误……freeBSD不会，好像基于平台…..<br>同步的方法readFileSync()和这个一样，使用的例子如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const text = fs.readFile(&apos;etc/passws&apos;, &apos;utf-8&apos; (error, buffer) =&gt; &#123;</span><br><span class="line">    if(error) throw err</span><br><span class="line">    console.log(buffer) </span><br><span class="line">  &#125;) &#123;</span><br><span class="line">&#125;</span><br><span class="line">//将文件按行拆成数组......</span><br><span class="line">text.split(/\r?\n/).forEach((item) =&gt; &#123;</span><br><span class="line">  console.log(item)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<h5 id="writeFile-和writeFileSync"><a href="#writeFile-和writeFileSync" class="headerlink" title="writeFile()和writeFileSync()"></a>writeFile()和writeFileSync()</h5><p>用于写入文件。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>是否必须</th>
+<th>例子</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件路径</td>
+<td>是</td>
+<td>上同</td>
+<td>上同</td>
+</tr>
+<tr>
+<td>写入的字符串或文件</td>
+<td>是</td>
+<td>‘hello’</td>
+<td>可以是字符串，也可以是文件名，还可以是buffer </td>
+</tr>
+<tr>
+<td>option配置</td>
+<td>否</td>
+<td>上同</td>
+<td>上同</td>
+</tr>
+<tr>
+<td>写入完成时的回调</td>
+<td>是</td>
+<td>上同</td>
+<td>上同</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fs.writeFile(&apos;message.txt&apos;, &apos;Hello Node.js&apos;, (err) =&gt; &#123;</span><br><span class="line">  if (err) throw err;</span><br><span class="line">  console.log(&apos;The file has been saved!&apos;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这里的官方文档上写了注意……多次对同一文件使用，而且不等待回调函数，是不安全的，对于多次写入同一文件，强烈建议使用fs.createWriteStream</p>
+<h5 id="fs-createWriteStream"><a href="#fs-createWriteStream" class="headerlink" title="fs.createWriteStream()"></a>fs.createWriteStream()</h5><p>这个方法，创建了一个写入数据流的对象，该对象的write方法用于写入数据，end方法用于结束写入操作…..<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const out = fs.createWriteStream(fileName, &#123;</span><br><span class="line">  flags: &apos;w&apos;,</span><br><span class="line">  encoding: &apos;utf8&apos;,</span><br><span class="line">  fd: null,</span><br><span class="line">  mode: 0o666,</span><br><span class="line">  autoClose: true</span><br><span class="line">&#125;)</span><br><span class="line">out.write(str)</span><br><span class="line">out.end()</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>是否必须</th>
+<th>作用 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件路径</td>
+<td>是</td>
+<td>略</td>
+</tr>
+<tr>
+<td>options</td>
+<td>是</td>
+<td>一些配置，具体的配置有flags：一个string，大概是写入的模式比如w，r+等，encoding：编码；fd；mode；autoClose：设置是否自动关闭；start：一个integer</td>
+</tr>
+</tbody>
+</table>
+<p>注意： 如果autoClose设置为true（默认），则在遇到error和end的时候，会自动关闭，如果是false，即使有错误，也不会被关闭，所以要注意了，你要正确的负责关闭。，并确保文件描述符没有泄露， fd和mode暂时还不知道它的作用。</p>
+<p>如果要对统一文件进行反复的读写，知道一直不停的out.write()就可以了，最后别忘记end()</p>
+<p>相对的createWriteStream和它一样使用，但是它会返回一个ReadStream可读流对象。而且它第二个参数options中对了一个end字段。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fs.createReadStream(&apos;sample.txt&apos;, &#123; start: 90, end: 99 &#125;);</span><br><span class="line">// 设置了start和end之后，使其可以从文件读取一定范围的字节而不是整个文件</span><br></pre></td></tr></table></figure></p>
+<h5 id="createWriteStream和createReadSteam结合使用拷贝大文件实例"><a href="#createWriteStream和createReadSteam结合使用拷贝大文件实例" class="headerlink" title="createWriteStream和createReadSteam结合使用拷贝大文件实例"></a>createWriteStream和createReadSteam结合使用拷贝大文件实例</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const fileCopy = (filename1, filename2, done) =&gt; &#123;</span><br><span class="line">  let input = fs.createReadStream(filename1);</span><br><span class="line">  let output = fs.createWriteStream(filename2);</span><br><span class="line"></span><br><span class="line">  input.on(&apos;data&apos;, function(d) &#123; output.write(d) &#125;) </span><br><span class="line">  input.on(&apos;error&apos;, function(error) &#123; throw error &#125;) </span><br><span class="line">  input.on(&apos;end&apos;, function() &#123;</span><br><span class="line">    output.end()</span><br><span class="line">    if (done) done();</span><br><span class="line">  &#125;) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="二、文件的操作"><a href="#二、文件的操作" class="headerlink" title="二、文件的操作"></a>二、文件的操作</h3><h5 id="exist-、mkdir"><a href="#exist-、mkdir" class="headerlink" title="exist() 、mkdir()"></a>exist() 、mkdir()</h5><p>exist()判断文件目录是否存在，他的回调函数参数，是不管最后结果如何都会调用的，需要注意的是，以前我们写java的文件IO，在打开文件的时候都需要先用类似方法判断目录是否存在，但是node里边，open方法本身就能检查，<br>mkdir()用于新建目录，它接收三个参数，目录名、权限值和回调函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">const fs = require(&apos;fs&apos;);</span><br><span class="line">// 如果给定目录存在，就删除它。</span><br><span class="line">if(fs.existSync(outputFolder)) &#123;</span><br><span class="line">  console.log(&apos;删除&apos; + outputFolder)</span><br><span class="line">  fs.rmdirSync(outputFolder)</span><br><span class="line">&#125;</span><br><span class="line">//  新建目录</span><br><span class="line">fs.mkdir(&apos;./helloDir&apos;,0777, function (err) &#123;</span><br><span class="line">  if (err) throw err;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h5 id="stat"><a href="#stat" class="headerlink" title="stat()"></a>stat()</h5><p>它用来判断是一个文件还是一个目录，接收一个文件或者目录。</p>
+<h5 id="watch"><a href="#watch" class="headerlink" title="watch()"></a>watch()</h5><p>监控文件，如果文件发生变化，则触发回调函数。返回的是一个fs.FSWatch<br>参数 | 是否必须 | 作用<br>—-| —- | —-<br>文件名 | 是 | 略<br>options参数 | fou | 如果指定，则是一个对象，包括persistet：布尔值（默认true），表明文件被监控时，进程是否还要继续运行； recursive：指明是否全部子目录应该被监视，或只是当前目录（默认false）；encoding：默认utf-8<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fs.watch(&apos;somedir&apos;, (eventType, filename) =&gt; &#123;</span><br><span class="line">  console.log(`事件类型是: $&#123;eventType&#125;`);</span><br><span class="line">  if (filename) &#123;</span><br><span class="line">    console.log(`提供的文件名: $&#123;filename&#125;`);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    console.log(&apos;未提供文件名&apos;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>注意，还有一个watchFile()，作用和它差不多，效率低，官方建议用这个。但fs.watch API 不是 100％ 跨平台一致的，且在某些情况下不可用。递归选项只支持 macOS 和 Windows</p>
+<h5 id="fs-lstat-path"><a href="#fs-lstat-path" class="headerlink" title="fs.lstat(path)"></a>fs.lstat(path)</h5><p>接收一个文件url，返回一个fs.Stats实例，他的同步方法是fs.lstatSync(path)</p>
+<h3 id="三、webpack应用，写一个多入口的初始化entry函数"><a href="#三、webpack应用，写一个多入口的初始化entry函数" class="headerlink" title="三、webpack应用，写一个多入口的初始化entry函数"></a>三、webpack应用，写一个多入口的初始化entry函数</h3><p>在使用开发react应用的时候，使用webpack打包需要有多入口的时候，也就是说，我有多个entry，每个enrty各自生成一个html模版，这个时候，我们可以写个自动脚本，如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">const _ = require(&apos;lodash&apos;)</span><br><span class="line">const HtmlWebpackPlugin = require(&apos;html-webpack-plugin&apos;)</span><br><span class="line"></span><br><span class="line">const fs = require(&apos;fs&apos;);</span><br><span class="line">const  path = require(&apos;path&apos;);</span><br><span class="line"></span><br><span class="line">const entryDir = path.join(__dirname, &apos;src/entry/&apos;)</span><br><span class="line">const templateFile = path.join(__dirname, &apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">const addEntryFn = (config, key, value) =&gt; &#123;</span><br><span class="line">  console.log(`找到了entry！，key=$&#123;key&#125;,value=$&#123;value&#125;`);</span><br><span class="line">  config.entry[key] = value</span><br><span class="line">  config.plugins.push(new HtmlWebpackPlugin(</span><br><span class="line">    &#123;</span><br><span class="line">      title: key,</span><br><span class="line">      filename: key + &apos;.html&apos;,</span><br><span class="line">      chunks: [key],</span><br><span class="line">      template: templateFile,</span><br><span class="line">      multihtmlCache: true,</span><br><span class="line">    &#125;</span><br><span class="line">  ))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const getEntrys = (config, rootpath, fn) =&gt; &#123;</span><br><span class="line">  const files = fs.readdirSync(rootpath)</span><br><span class="line">  for(let key in files) &#123;</span><br><span class="line">    const fullName = path.join(rootpath, &quot;/&quot;, files[key])</span><br><span class="line">    const stat = fs.lstatSync(fullName)</span><br><span class="line">    if (stat.isDirectory()) &#123;</span><br><span class="line">      getEntrys(config, fullName, fn)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      const fileName = path.basename(fullName, &apos;.jsx&apos;)</span><br><span class="line">      if (_.startsWith(fileName, &apos;entry-&apos;)) &#123;</span><br><span class="line">        const entryKey = fileName.replace(&apos;entry-&apos;, &apos;&apos;)</span><br><span class="line">        fn(config, entryKey, fullName)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> module.exports = function (config) &#123;</span><br><span class="line">  getEntrys(config, entryDir, addEntryFn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/node/" rel="tag"># node</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/18/Node笔记-反向代理的nodeJS实践/" rel="next" title="Node笔记--------反向代理的nodeJS实践">
+                <i class="fa fa-chevron-left"></i> Node笔记--------反向代理的nodeJS实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">geek720</p>
+              <p class="site-description motion-element" itemprop="description">记录日常，谢谢大家</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、文件的读写"><span class="nav-number">1.</span> <span class="nav-text">一、文件的读写</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#readFile-和readFileSync"><span class="nav-number">1.0.1.</span> <span class="nav-text">readFile()和readFileSync()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#writeFile-和writeFileSync"><span class="nav-number">1.0.2.</span> <span class="nav-text">writeFile()和writeFileSync()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fs-createWriteStream"><span class="nav-number">1.0.3.</span> <span class="nav-text">fs.createWriteStream()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#createWriteStream和createReadSteam结合使用拷贝大文件实例"><span class="nav-number">1.0.4.</span> <span class="nav-text">createWriteStream和createReadSteam结合使用拷贝大文件实例</span></a></li></ol></li></ol><li class="nav-item nav-level-3"><a class="nav-link" href="#二、文件的操作"><span class="nav-number">2.</span> <span class="nav-text">二、文件的操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#exist-、mkdir"><span class="nav-number">2.0.1.</span> <span class="nav-text">exist() 、mkdir()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#stat"><span class="nav-number">2.0.2.</span> <span class="nav-text">stat()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#watch"><span class="nav-number">2.0.3.</span> <span class="nav-text">watch()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#fs-lstat-path"><span class="nav-number">2.0.4.</span> <span class="nav-text">fs.lstat(path)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、webpack应用，写一个多入口的初始化entry函数"><span class="nav-number">3.</span> <span class="nav-text">三、webpack应用，写一个多入口的初始化entry函数</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geek720</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

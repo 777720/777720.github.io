@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="代理最近在学习nginx，其中一个最重要的概念就是反向代理，但是反向代理究竟是什么？  反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。  这是百度百科上给出的标准答案，但是光看定义根本完全不懂啊！所以我们">
+<meta name="keywords" content="node">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node笔记--------反向代理的nodeJS实践">
+<meta property="og:url" content="http://yoursite.com/2018/12/18/Node笔记-反向代理的nodeJS实践/index.html">
+<meta property="og:site_name" content="geek720的日常">
+<meta property="og:description" content="代理最近在学习nginx，其中一个最重要的概念就是反向代理，但是反向代理究竟是什么？  反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。  这是百度百科上给出的标准答案，但是光看定义根本完全不懂啊！所以我们">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/2204576-e75fcff418f6b909.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2018-12-18T09:36:13.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node笔记--------反向代理的nodeJS实践">
+<meta name="twitter:description" content="代理最近在学习nginx，其中一个最重要的概念就是反向代理，但是反向代理究竟是什么？  反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。  这是百度百科上给出的标准答案，但是光看定义根本完全不懂啊！所以我们">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/2204576-e75fcff418f6b909.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/18/Node笔记-反向代理的nodeJS实践/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Node笔记--------反向代理的nodeJS实践 | geek720的日常</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geek720的日常</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">一名不愿透露姓名的程序员</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Node笔记-反向代理的nodeJS实践/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Node笔记--------反向代理的nodeJS实践
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-18 17:36:04 / 修改时间：17:36:13" itemprop="dateCreated datePublished" datetime="2018-12-18T17:36:04+08:00">2018-12-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h4><p>最近在学习nginx，其中一个最重要的概念就是反向代理，但是反向代理究竟是什么？</p>
+<blockquote>
+<p>反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。</p>
+</blockquote>
+<p>这是百度百科上给出的标准答案，但是光看定义根本完全不懂啊！所以我们先来明白，代理是怎么样的一个概念。</p>
+<blockquote>
+<p>代理 （proxy）在百科上的释义： 代理也称代理服务器（Proxy Server），主要工作在会话层。指以代理服务器的方式来接收internet上的连接请求，然后将请求转发给内部网络上的服务器。</p>
+</blockquote>
+<p>总而言之，它就是一个委托人的作用。</p>
+<h4 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h4><p>代理也分两种，正向代理和反向代理，这里先介绍正向代理。<br>正向代理是一般常见的代理方式，客户机访问不到原始服务器的情况下，转而将请求发送给正向代理服务器，正向代理服务器将资源从原始服务器中取回来，在发送给客户机。正向代理的一般用途就是为在防火墙内的客户机提供访问internet的途径。</p>
+<h4 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h4><p>客户机像反向代理服务器发送请求，反向代理服务器判断要把请求发送给哪个原始服务器。这里与正向代理不同的是，反向代理服务器客户机是不用进行设置的。所以一般也用在网站的负载均衡上。</p>
+<h4 id="反向代理的实践"><a href="#反向代理的实践" class="headerlink" title="反向代理的实践"></a>反向代理的实践</h4><p>这里先不讲nginx的反向代理的实现，有机会再另起一篇文章……这里来实现一个反向代理服务器。</p>
+<ol>
+<li>需求<br>网站上的public/image/目录下有图片资源，用户在敲入/images/xxxxx的时候会访问图片，这时候我们想先让请求跳转到cdn服务器上（现在的web框架下一般会把图片资源都放在一个专门的cdn服务器上来使用户高速访问），如果cdn服务器上没有该图片资源，则在/public/images/下查找。</li>
+<li>解决方案<br>这种需求很符合代理类型中的反向代理，用户发送请求给代理，代理判断该请求是该发往cdn服务器去取资源，还是在本服务器取资源。而正向代理需要用户自己设置去哪里取资源….好蠢。</li>
+<li>技术选型<br>NodeJs</li>
+</ol>
+<h5 id="第一步：使用express框架先搭建一个简单的服务器"><a href="#第一步：使用express框架先搭建一个简单的服务器" class="headerlink" title="第一步：使用express框架先搭建一个简单的服务器"></a>第一步：使用express框架先搭建一个简单的服务器</h5><p>index.js，这个文件就是启动服务器的主文件，撸代码之前你得确定你已经稳定安装了node环境……<br>我们先来梳理下整个小项目的目录<br><img src="http://upload-images.jianshu.io/upload_images/2204576-e75fcff418f6b909.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整个项目的目录"></p>
+<ol>
+<li>index.js 是项目启动的主文件</li>
+<li>public/images： 项目的资源目录</li>
+<li>config.json： 项目的配置json</li>
+<li>node_moudles：npm自动生成的依赖包文件夹</li>
+<li>package.json： node的经典文件，npm init会生成<br>首先你要先运行，来安装express依赖。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i express --save</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//index.js</span><br><span class="line">const path = require(&apos;path&apos;)</span><br><span class="line">const express = require(&apos;express&apos;)</span><br><span class="line"></span><br><span class="line">const app =  express();</span><br><span class="line">app.get(&apos;/&apos;, function (req, res) &#123;</span><br><span class="line">  res.send(&apos;Hello World!&apos;);</span><br><span class="line">&#125;);</span><br><span class="line">app.listen(8080)</span><br></pre></td></tr></table></figure>
+<p>在浏览器上访问8080端口看到有HelloWorld就算成功了！</p>
+<h5 id="第二步-：在config-json下配置你的cdn服务器"><a href="#第二步-：在config-json下配置你的cdn服务器" class="headerlink" title="第二步 ：在config.json下配置你的cdn服务器"></a>第二步 ：在config.json下配置你的cdn服务器</h5><p>既然要跳转到cdn服务器，首先就需要一个cdn服务器的baseUrl，在这里我们将这个url配置成一个全局变量放在config.json中，这里我因为没有别的另外的服务器，我就随便写一个，反正只要跳转就好了嘛。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// config.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;baseImageUrl&quot;: &quot;https://www.baidu.com/s?ie=utf-8&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=1&amp;tn=baidu&amp;wd=&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="第三步：-配置反向代理逻辑"><a href="#第三步：-配置反向代理逻辑" class="headerlink" title="第三步： 配置反向代理逻辑"></a>第三步： 配置反向代理逻辑</h5><p>这一步首先要<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i express-http-proxy --save</span><br></pre></td></tr></table></figure></p>
+<p>我们首先下载express的代理中间件，这个包里边有个proxy()来完成反向代理。<br>还是在index.js<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">const path = require(&apos;path&apos;)</span><br><span class="line">const express = require(&apos;express&apos;)</span><br><span class="line">const proxy = require(&apos;express-http-proxy&apos;)</span><br><span class="line">const baseImageUrl = require(&apos;./config.json&apos;).baseImageUrl</span><br><span class="line"></span><br><span class="line">const proxyBsaeImageUrl = baseImageUrl</span><br><span class="line">  ? proxy(baseImageUrl, &#123;</span><br><span class="line">      proxyReqPathResolver: function(req) &#123;</span><br><span class="line">        const newPath = baseImageUrl + req.path;</span><br><span class="line">        console.log(&apos;newPath: &apos; + newPath)</span><br><span class="line">        return newPath</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  : express.static(path.join(__dirname, &apos;public/images&apos;))</span><br><span class="line"></span><br><span class="line">const app =  express();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.use(&apos;/images&apos;, proxyBsaeImageUrl)</span><br><span class="line">app.listen(8080)</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>这里我们使用了proxyBaseImageUrl来设置跳转的url，使用app.use()方法来跳转</li>
+<li>proxyBaseImageUrl的返回是整个反向代理的关键，首先使用proxy()方法，将头url传入，然后在proxyReqPathResolver中将url拼接完成。proxyReqPathResolver是完成在反向代理之前路径的修改操作等。</li>
+</ol>
+<p>最后就是在localhost中敲入/images/xxxxxx，它会跳转到百度中去搜索……整个逻辑都是在proxyReqPathResolver完成的，如果你想要更简单的反向代理逻辑可以写的更完整！</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/node/" rel="tag"># node</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/18/JavaScript的一些思考，原生继承的问题/" rel="next" title="JavaScript的一些思考，原生继承的问题">
+                <i class="fa fa-chevron-left"></i> JavaScript的一些思考，原生继承的问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/18/Node笔记-fs文件模块/" rel="prev" title="Node笔记--------fs文件模块">
+                Node笔记--------fs文件模块 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">geek720</p>
+              <p class="site-description motion-element" itemprop="description">记录日常，谢谢大家</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#代理"><span class="nav-number">1.</span> <span class="nav-text">代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#正向代理"><span class="nav-number">2.</span> <span class="nav-text">正向代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反向代理"><span class="nav-number">3.</span> <span class="nav-text">反向代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#反向代理的实践"><span class="nav-number">4.</span> <span class="nav-text">反向代理的实践</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#第一步：使用express框架先搭建一个简单的服务器"><span class="nav-number">4.1.</span> <span class="nav-text">第一步：使用express框架先搭建一个简单的服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第二步-：在config-json下配置你的cdn服务器"><span class="nav-number">4.2.</span> <span class="nav-text">第二步 ：在config.json下配置你的cdn服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#第三步：-配置反向代理逻辑"><span class="nav-number">4.3.</span> <span class="nav-text">第三步： 配置反向代理逻辑</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geek720</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

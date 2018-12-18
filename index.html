@@ -304,6 +304,429 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Node笔记-fs文件模块/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/18/Node笔记-fs文件模块/" class="post-title-link" itemprop="http://yoursite.com/index.html">Node笔记--------fs文件模块</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-18 17:36:36 / 修改时间：17:36:46" itemprop="dateCreated datePublished" datetime="2018-12-18T17:36:36+08:00">2018-12-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>fs是filesystem的缩写，基本上就是node对于文件系统操作封装的一些api</p>
+<h3 id="一、文件的读写"><a href="#一、文件的读写" class="headerlink" title="一、文件的读写"></a>一、文件的读写</h3><p>文件的读写这里面的api有readFile(),writeFile(),和readFileSync(),writeFileSync()。前者是异步，后者是同步，两种不同的情况供开发者选择。</p>
+<h5 id="readFile-和readFileSync"><a href="#readFile-和readFileSync" class="headerlink" title="readFile()和readFileSync()"></a>readFile()和readFileSync()</h5><p>readFile用于异步读取数据，他有几个参数：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>是否必须</th>
+<th>例子</th>
+<th>作用 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件的路径</td>
+<td>是</td>
+<td>‘./image.png’</td>
+<td>可以是绝对路径，也可是相对路径，如果是相对路径，是相对于当前进程所在的路径 process.cwd(),官方文档上好像写也可以传一个buffer……还能是文件名和文件描述符（不知道是什么东西）</td>
+</tr>
+<tr>
+<td>options配置</td>
+<td>否</td>
+<td>‘utf-8’</td>
+<td>可以配置文件编码实例，默认是utf-8</td>
+</tr>
+<tr>
+<td>读取完成后的回调参数</td>
+<td>是</td>
+<td>func (err, buffer) { }</td>
+<td>该函数一参是发生错误时的错误对象，二参是代表文件内容的buffer实例</td>
+</tr>
+</tbody>
+</table>
+<p>如果，文件的路径是一个目录，会返回一个错误……freeBSD不会，好像基于平台…..<br>同步的方法readFileSync()和这个一样，使用的例子如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const text = fs.readFile(&apos;etc/passws&apos;, &apos;utf-8&apos; (error, buffer) =&gt; &#123;</span><br><span class="line">    if(error) throw err</span><br><span class="line">    console.log(buffer) </span><br><span class="line">  &#125;) &#123;</span><br><span class="line">&#125;</span><br><span class="line">//将文件按行拆成数组......</span><br><span class="line">text.split(/\r?\n/).forEach((item) =&gt; &#123;</span><br><span class="line">  console.log(item)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<h5 id="writeFile-和writeFileSync"><a href="#writeFile-和writeFileSync" class="headerlink" title="writeFile()和writeFileSync()"></a>writeFile()和writeFileSync()</h5><p>用于写入文件。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>是否必须</th>
+<th>例子</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件路径</td>
+<td>是</td>
+<td>上同</td>
+<td>上同</td>
+</tr>
+<tr>
+<td>写入的字符串或文件</td>
+<td>是</td>
+<td>‘hello’</td>
+<td>可以是字符串，也可以是文件名，还可以是buffer </td>
+</tr>
+<tr>
+<td>option配置</td>
+<td>否</td>
+<td>上同</td>
+<td>上同</td>
+</tr>
+<tr>
+<td>写入完成时的回调</td>
+<td>是</td>
+<td>上同</td>
+<td>上同</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fs.writeFile(&apos;message.txt&apos;, &apos;Hello Node.js&apos;, (err) =&gt; &#123;</span><br><span class="line">  if (err) throw err;</span><br><span class="line">  console.log(&apos;The file has been saved!&apos;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这里的官方文档上写了注意……多次对同一文件使用，而且不等待回调函数，是不安全的，对于多次写入同一文件，强烈建议使用fs.createWriteStream</p>
+<h5 id="fs-createWriteStream"><a href="#fs-createWriteStream" class="headerlink" title="fs.createWriteStream()"></a>fs.createWriteStream()</h5><p>这个方法，创建了一个写入数据流的对象，该对象的write方法用于写入数据，end方法用于结束写入操作…..<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">const out = fs.createWriteStream(fileName, &#123;</span><br><span class="line">  flags: &apos;w&apos;,</span><br><span class="line">  encoding: &apos;utf8&apos;,</span><br><span class="line">  fd: null,</span><br><span class="line">  mode: 0o666,</span><br><span class="line">  autoClose: true</span><br><span class="line">&#125;)</span><br><span class="line">out.write(str)</span><br><span class="line">out.end()</span><br></pre></td></tr></table></figure></p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>是否必须</th>
+<th>作用 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件路径</td>
+<td>是</td>
+<td>略</td>
+</tr>
+<tr>
+<td>options</td>
+<td>是</td>
+<td>一些配置，具体的配置有flags：一个string，大概是写入的模式比如w，r+等，encoding：编码；fd；mode；autoClose：设置是否自动关闭；start：一个integer</td>
+</tr>
+</tbody>
+</table>
+<p>注意： 如果autoClose设置为true（默认），则在遇到error和end的时候，会自动关闭，如果是false，即使有错误，也不会被关闭，所以要注意了，你要正确的负责关闭。，并确保文件描述符没有泄露， fd和mode暂时还不知道它的作用。</p>
+<p>如果要对统一文件进行反复的读写，知道一直不停的out.write()就可以了，最后别忘记end()</p>
+<p>相对的createWriteStream和它一样使用，但是它会返回一个ReadStream可读流对象。而且它第二个参数options中对了一个end字段。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fs.createReadStream(&apos;sample.txt&apos;, &#123; start: 90, end: 99 &#125;);</span><br><span class="line">// 设置了start和end之后，使其可以从文件读取一定范围的字节而不是整个文件</span><br></pre></td></tr></table></figure></p>
+<h5 id="createWriteStream和createReadSteam结合使用拷贝大文件实例"><a href="#createWriteStream和createReadSteam结合使用拷贝大文件实例" class="headerlink" title="createWriteStream和createReadSteam结合使用拷贝大文件实例"></a>createWriteStream和createReadSteam结合使用拷贝大文件实例</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">const fileCopy = (filename1, filename2, done) =&gt; &#123;</span><br><span class="line">  let input = fs.createReadStream(filename1);</span><br><span class="line">  let output = fs.createWriteStream(filename2);</span><br><span class="line"></span><br><span class="line">  input.on(&apos;data&apos;, function(d) &#123; output.write(d) &#125;) </span><br><span class="line">  input.on(&apos;error&apos;, function(error) &#123; throw error &#125;) </span><br><span class="line">  input.on(&apos;end&apos;, function() &#123;</span><br><span class="line">    output.end()</span><br><span class="line">    if (done) done();</span><br><span class="line">  &#125;) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="二、文件的操作"><a href="#二、文件的操作" class="headerlink" title="二、文件的操作"></a>二、文件的操作</h3><h5 id="exist-、mkdir"><a href="#exist-、mkdir" class="headerlink" title="exist() 、mkdir()"></a>exist() 、mkdir()</h5><p>exist()判断文件目录是否存在，他的回调函数参数，是不管最后结果如何都会调用的，需要注意的是，以前我们写java的文件IO，在打开文件的时候都需要先用类似方法判断目录是否存在，但是node里边，open方法本身就能检查，<br>mkdir()用于新建目录，它接收三个参数，目录名、权限值和回调函数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">const fs = require(&apos;fs&apos;);</span><br><span class="line">// 如果给定目录存在，就删除它。</span><br><span class="line">if(fs.existSync(outputFolder)) &#123;</span><br><span class="line">  console.log(&apos;删除&apos; + outputFolder)</span><br><span class="line">  fs.rmdirSync(outputFolder)</span><br><span class="line">&#125;</span><br><span class="line">//  新建目录</span><br><span class="line">fs.mkdir(&apos;./helloDir&apos;,0777, function (err) &#123;</span><br><span class="line">  if (err) throw err;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h5 id="stat"><a href="#stat" class="headerlink" title="stat()"></a>stat()</h5><p>它用来判断是一个文件还是一个目录，接收一个文件或者目录。</p>
+<h5 id="watch"><a href="#watch" class="headerlink" title="watch()"></a>watch()</h5><p>监控文件，如果文件发生变化，则触发回调函数。返回的是一个fs.FSWatch<br>参数 | 是否必须 | 作用<br>—-| —- | —-<br>文件名 | 是 | 略<br>options参数 | fou | 如果指定，则是一个对象，包括persistet：布尔值（默认true），表明文件被监控时，进程是否还要继续运行； recursive：指明是否全部子目录应该被监视，或只是当前目录（默认false）；encoding：默认utf-8<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fs.watch(&apos;somedir&apos;, (eventType, filename) =&gt; &#123;</span><br><span class="line">  console.log(`事件类型是: $&#123;eventType&#125;`);</span><br><span class="line">  if (filename) &#123;</span><br><span class="line">    console.log(`提供的文件名: $&#123;filename&#125;`);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    console.log(&apos;未提供文件名&apos;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>注意，还有一个watchFile()，作用和它差不多，效率低，官方建议用这个。但fs.watch API 不是 100％ 跨平台一致的，且在某些情况下不可用。递归选项只支持 macOS 和 Windows</p>
+<h5 id="fs-lstat-path"><a href="#fs-lstat-path" class="headerlink" title="fs.lstat(path)"></a>fs.lstat(path)</h5><p>接收一个文件url，返回一个fs.Stats实例，他的同步方法是fs.lstatSync(path)</p>
+<h3 id="三、webpack应用，写一个多入口的初始化entry函数"><a href="#三、webpack应用，写一个多入口的初始化entry函数" class="headerlink" title="三、webpack应用，写一个多入口的初始化entry函数"></a>三、webpack应用，写一个多入口的初始化entry函数</h3><p>在使用开发react应用的时候，使用webpack打包需要有多入口的时候，也就是说，我有多个entry，每个enrty各自生成一个html模版，这个时候，我们可以写个自动脚本，如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">const _ = require(&apos;lodash&apos;)</span><br><span class="line">const HtmlWebpackPlugin = require(&apos;html-webpack-plugin&apos;)</span><br><span class="line"></span><br><span class="line">const fs = require(&apos;fs&apos;);</span><br><span class="line">const  path = require(&apos;path&apos;);</span><br><span class="line"></span><br><span class="line">const entryDir = path.join(__dirname, &apos;src/entry/&apos;)</span><br><span class="line">const templateFile = path.join(__dirname, &apos;index.html&apos;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">const addEntryFn = (config, key, value) =&gt; &#123;</span><br><span class="line">  console.log(`找到了entry！，key=$&#123;key&#125;,value=$&#123;value&#125;`);</span><br><span class="line">  config.entry[key] = value</span><br><span class="line">  config.plugins.push(new HtmlWebpackPlugin(</span><br><span class="line">    &#123;</span><br><span class="line">      title: key,</span><br><span class="line">      filename: key + &apos;.html&apos;,</span><br><span class="line">      chunks: [key],</span><br><span class="line">      template: templateFile,</span><br><span class="line">      multihtmlCache: true,</span><br><span class="line">    &#125;</span><br><span class="line">  ))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const getEntrys = (config, rootpath, fn) =&gt; &#123;</span><br><span class="line">  const files = fs.readdirSync(rootpath)</span><br><span class="line">  for(let key in files) &#123;</span><br><span class="line">    const fullName = path.join(rootpath, &quot;/&quot;, files[key])</span><br><span class="line">    const stat = fs.lstatSync(fullName)</span><br><span class="line">    if (stat.isDirectory()) &#123;</span><br><span class="line">      getEntrys(config, fullName, fn)</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      const fileName = path.basename(fullName, &apos;.jsx&apos;)</span><br><span class="line">      if (_.startsWith(fileName, &apos;entry-&apos;)) &#123;</span><br><span class="line">        const entryKey = fileName.replace(&apos;entry-&apos;, &apos;&apos;)</span><br><span class="line">        fn(config, entryKey, fullName)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> module.exports = function (config) &#123;</span><br><span class="line">  getEntrys(config, entryDir, addEntryFn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Node笔记-反向代理的nodeJS实践/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/18/Node笔记-反向代理的nodeJS实践/" class="post-title-link" itemprop="http://yoursite.com/index.html">Node笔记--------反向代理的nodeJS实践</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-18 17:36:04 / 修改时间：17:36:13" itemprop="dateCreated datePublished" datetime="2018-12-18T17:36:04+08:00">2018-12-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="代理"><a href="#代理" class="headerlink" title="代理"></a>代理</h4><p>最近在学习nginx，其中一个最重要的概念就是反向代理，但是反向代理究竟是什么？</p>
+<blockquote>
+<p>反向代理（Reverse Proxy）方式是指以代理服务器来接受internet上的连接请求，然后将请求转发给内部网络上的服务器，并将从服务器上得到的结果返回给internet上请求连接的客户端，此时代理服务器对外就表现为一个反向代理服务器。</p>
+</blockquote>
+<p>这是百度百科上给出的标准答案，但是光看定义根本完全不懂啊！所以我们先来明白，代理是怎么样的一个概念。</p>
+<blockquote>
+<p>代理 （proxy）在百科上的释义： 代理也称代理服务器（Proxy Server），主要工作在会话层。指以代理服务器的方式来接收internet上的连接请求，然后将请求转发给内部网络上的服务器。</p>
+</blockquote>
+<p>总而言之，它就是一个委托人的作用。</p>
+<h4 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理"></a>正向代理</h4><p>代理也分两种，正向代理和反向代理，这里先介绍正向代理。<br>正向代理是一般常见的代理方式，客户机访问不到原始服务器的情况下，转而将请求发送给正向代理服务器，正向代理服务器将资源从原始服务器中取回来，在发送给客户机。正向代理的一般用途就是为在防火墙内的客户机提供访问internet的途径。</p>
+<h4 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理"></a>反向代理</h4><p>客户机像反向代理服务器发送请求，反向代理服务器判断要把请求发送给哪个原始服务器。这里与正向代理不同的是，反向代理服务器客户机是不用进行设置的。所以一般也用在网站的负载均衡上。</p>
+<h4 id="反向代理的实践"><a href="#反向代理的实践" class="headerlink" title="反向代理的实践"></a>反向代理的实践</h4><p>这里先不讲nginx的反向代理的实现，有机会再另起一篇文章……这里来实现一个反向代理服务器。</p>
+<ol>
+<li>需求<br>网站上的public/image/目录下有图片资源，用户在敲入/images/xxxxx的时候会访问图片，这时候我们想先让请求跳转到cdn服务器上（现在的web框架下一般会把图片资源都放在一个专门的cdn服务器上来使用户高速访问），如果cdn服务器上没有该图片资源，则在/public/images/下查找。</li>
+<li>解决方案<br>这种需求很符合代理类型中的反向代理，用户发送请求给代理，代理判断该请求是该发往cdn服务器去取资源，还是在本服务器取资源。而正向代理需要用户自己设置去哪里取资源….好蠢。</li>
+<li>技术选型<br>NodeJs</li>
+</ol>
+<h5 id="第一步：使用express框架先搭建一个简单的服务器"><a href="#第一步：使用express框架先搭建一个简单的服务器" class="headerlink" title="第一步：使用express框架先搭建一个简单的服务器"></a>第一步：使用express框架先搭建一个简单的服务器</h5><p>index.js，这个文件就是启动服务器的主文件，撸代码之前你得确定你已经稳定安装了node环境……<br>我们先来梳理下整个小项目的目录<br><img src="http://upload-images.jianshu.io/upload_images/2204576-e75fcff418f6b909.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="整个项目的目录"></p>
+<ol>
+<li>index.js 是项目启动的主文件</li>
+<li>public/images： 项目的资源目录</li>
+<li>config.json： 项目的配置json</li>
+<li>node_moudles：npm自动生成的依赖包文件夹</li>
+<li>package.json： node的经典文件，npm init会生成<br>首先你要先运行，来安装express依赖。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i express --save</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//index.js</span><br><span class="line">const path = require(&apos;path&apos;)</span><br><span class="line">const express = require(&apos;express&apos;)</span><br><span class="line"></span><br><span class="line">const app =  express();</span><br><span class="line">app.get(&apos;/&apos;, function (req, res) &#123;</span><br><span class="line">  res.send(&apos;Hello World!&apos;);</span><br><span class="line">&#125;);</span><br><span class="line">app.listen(8080)</span><br></pre></td></tr></table></figure>
+<p>在浏览器上访问8080端口看到有HelloWorld就算成功了！</p>
+<h5 id="第二步-：在config-json下配置你的cdn服务器"><a href="#第二步-：在config-json下配置你的cdn服务器" class="headerlink" title="第二步 ：在config.json下配置你的cdn服务器"></a>第二步 ：在config.json下配置你的cdn服务器</h5><p>既然要跳转到cdn服务器，首先就需要一个cdn服务器的baseUrl，在这里我们将这个url配置成一个全局变量放在config.json中，这里我因为没有别的另外的服务器，我就随便写一个，反正只要跳转就好了嘛。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// config.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;baseImageUrl&quot;: &quot;https://www.baidu.com/s?ie=utf-8&amp;f=8&amp;rsv_bp=1&amp;rsv_idx=1&amp;tn=baidu&amp;wd=&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h5 id="第三步：-配置反向代理逻辑"><a href="#第三步：-配置反向代理逻辑" class="headerlink" title="第三步： 配置反向代理逻辑"></a>第三步： 配置反向代理逻辑</h5><p>这一步首先要<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm i express-http-proxy --save</span><br></pre></td></tr></table></figure></p>
+<p>我们首先下载express的代理中间件，这个包里边有个proxy()来完成反向代理。<br>还是在index.js<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">const path = require(&apos;path&apos;)</span><br><span class="line">const express = require(&apos;express&apos;)</span><br><span class="line">const proxy = require(&apos;express-http-proxy&apos;)</span><br><span class="line">const baseImageUrl = require(&apos;./config.json&apos;).baseImageUrl</span><br><span class="line"></span><br><span class="line">const proxyBsaeImageUrl = baseImageUrl</span><br><span class="line">  ? proxy(baseImageUrl, &#123;</span><br><span class="line">      proxyReqPathResolver: function(req) &#123;</span><br><span class="line">        const newPath = baseImageUrl + req.path;</span><br><span class="line">        console.log(&apos;newPath: &apos; + newPath)</span><br><span class="line">        return newPath</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">  : express.static(path.join(__dirname, &apos;public/images&apos;))</span><br><span class="line"></span><br><span class="line">const app =  express();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app.use(&apos;/images&apos;, proxyBsaeImageUrl)</span><br><span class="line">app.listen(8080)</span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>这里我们使用了proxyBaseImageUrl来设置跳转的url，使用app.use()方法来跳转</li>
+<li>proxyBaseImageUrl的返回是整个反向代理的关键，首先使用proxy()方法，将头url传入，然后在proxyReqPathResolver中将url拼接完成。proxyReqPathResolver是完成在反向代理之前路径的修改操作等。</li>
+</ol>
+<p>最后就是在localhost中敲入/images/xxxxxx，它会跳转到百度中去搜索……整个逻辑都是在proxyReqPathResolver完成的，如果你想要更简单的反向代理逻辑可以写的更完整！</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/JavaScript的一些思考，原生继承的问题/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1743,7 +2166,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1766,7 +2189,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">4</span>
+                      
+                    
+                    <span class="site-state-item-count">5</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
