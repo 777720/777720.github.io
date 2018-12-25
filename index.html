@@ -304,6 +304,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/25/使用es6新的class语法来体验js的面向对象编程/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/25/使用es6新的class语法来体验js的面向对象编程/" class="post-title-link" itemprop="http://yoursite.com/index.html">使用es6新的class语法来体验js的面向对象编程</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-25 17:14:26 / 修改时间：17:14:55" itemprop="dateCreated datePublished" datetime="2018-12-25T17:14:26+08:00">2018-12-25</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天在看一本书，只有小小的一百多页，半天快看完半本了，名字叫《学习JavaScript数据结构预算法》.看下来的感受就是，短小精悍，适合复习一下大学学的数据结构。<br>在读到使用js实现栈的结构的时候，看到它的写法是之前的构造函数继承的写法，突发奇想，想用es6的语法改写一下试试，这是书上的写法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">function Stack() &#123;</span><br><span class="line">  var items = []</span><br><span class="line"></span><br><span class="line">  this.push = function(element) &#123;</span><br><span class="line">    items.push(element)</span><br><span class="line">  &#125;</span><br><span class="line">  this.pop = function() &#123;</span><br><span class="line">    return items.pop()</span><br><span class="line">  &#125;</span><br><span class="line">  this.peek = function() &#123;</span><br><span class="line">    return items[items.length - 1]</span><br><span class="line">  &#125;</span><br><span class="line">  this.isEmpty = function() &#123;</span><br><span class="line">    return items.length === 0</span><br><span class="line">  &#125;</span><br><span class="line">  this.size = function() &#123;</span><br><span class="line">    return items.length</span><br><span class="line">  &#125;</span><br><span class="line">  this.clear = function() &#123;</span><br><span class="line">    items = []</span><br><span class="line">  &#125;</span><br><span class="line">  this.print = function() &#123;</span><br><span class="line">    console.log(items.toString());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>算不上是类的写法，只是在函数里定义了几个方法，去修改items的值而已，新写的写法如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">class Strack &#123;</span><br><span class="line">  constructor() &#123;</span><br><span class="line">    this.item = []</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 栈的压入</span><br><span class="line">  push(value) &#123;</span><br><span class="line">    this.item.push(value)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 栈的弹出</span><br><span class="line">  pop() &#123;</span><br><span class="line">    this.item.pop()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 返回栈顶元素</span><br><span class="line">  peek() &#123;</span><br><span class="line">    let lengthTemp = this.item.length</span><br><span class="line">    return this.item[lengthTemp - 1]</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // 判空</span><br><span class="line">  isEmpty() &#123;</span><br><span class="line">    return this.item.length === 0</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // remove all</span><br><span class="line"></span><br><span class="line">  clear() &#123;</span><br><span class="line">    this.item = []</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // sum all items</span><br><span class="line">  size() &#123;</span><br><span class="line">    return this.item.length</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export default Strack</span><br></pre></td></tr></table></figure></p>
+<p>使用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const newStrack = new Strack()</span><br><span class="line">   newStrack.push(1)</span><br><span class="line">   newStrack.push(2)</span><br><span class="line">   newStrack.push(3)</span><br><span class="line">   newStrack.pop()</span><br><span class="line">   console.log(newStrack, newStrack);</span><br><span class="line">   console.log(&apos;newStrack is empty? : &apos;, newStrack.isEmpty());</span><br></pre></td></tr></table></figure></p>
+<p>很简单，但是没有弄清楚，这样写和以前的写法有什么的本质的区别，这一点需要去研究一下。</p>
+<h3 id="基于类的面向对象和基于原型的面向对象"><a href="#基于类的面向对象和基于原型的面向对象" class="headerlink" title="基于类的面向对象和基于原型的面向对象"></a>基于类的面向对象和基于原型的面向对象</h3><ul>
+<li><p>基于类的面向对象<br>在基于类的面向对象语言中（比如Java和C++）， 是构建在类(class)和实例(instance)上的。其中类定义了所有用于具有某一特征对象的属性。类是抽象的事物， 而不是其所描述的全部对象中的任何特定的个体。另一方面， 一个实例是一个类的实例化，是其中的一个成员。</p>
+</li>
+<li><p>基于原型的面向对象<br>在基于原型的语言中（如JavaScript）并不存在这种区别：它只有对象！不论是构造函数(constructor)，实例(instance)，原型(prototype)本身都是对象。基于原型的语言具有所谓的原型对象的概念，新对象可以从中获得原始的属性。</p>
+</li>
+</ul>
+<p>所以，在JavaScript中有一个很有意思的<strong>proto</strong>属性（ES6以下是非标准属性）用于访问其原型对象， 你会发现，上面提到的构造函数，实例，原型本身都有<strong>proto</strong>指向原型对象。其最后顺着原型链都会指向Object这个构造函数，然而Object的原型对象的原型是null，不信， 你可以尝试一下Object.prototype.<strong>proto</strong> === null为true。然而typeof null === ‘object’为true。到这里， 我相信你应该就能明白为什么JavaScript这类基于原型的语言中没有类和实例的区别， 而是万物皆对象！</p>
+<h3 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h3><p>js实现封装的办法和java其实差不多<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function Person(name) &#123;</span><br><span class="line">  this.name = name</span><br><span class="line">  var smallName = &apos;xiaoming&apos;</span><br><span class="line">&#125;</span><br><span class="line">Person. prototype.sayHi = function() &#123;</span><br><span class="line">  console.log(&apos;hello&apos;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上面代码，定义了一个私有变量smallName和一个方法sayHi，我们并不能通过实例化Person去访问smallName，还有我们也不知道sayH是怎么实现的，这样就实现了封装。</p>
+<h3 id="继承和多态"><a href="#继承和多态" class="headerlink" title="继承和多态"></a>继承和多态</h3><p>在es6以前，我最常使用的继承方式是使用protutype<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">function Person(name) &#123;</span><br><span class="line">    this.name = name</span><br><span class="line">    this.career = function() &#123;</span><br><span class="line">      console.log(&apos;I am a Person&apos; + name)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  Person.prototype.sayHi = function () &#123;</span><br><span class="line">    console.log(&apos;my name is &apos; + this.name);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  function Teacher(career) &#123;</span><br><span class="line">    this.career = function() &#123;</span><br><span class="line">      console.log(&apos;I am a &apos; + career + &apos;, my name is &apos; + this.name)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  Teacher.prototype = new Person(&apos;Ma&apos;)</span><br><span class="line">Teacher.prototype.constructor = Teacher</span><br><span class="line"></span><br><span class="line">  var personOne  = new Person(&apos;Zhang&apos;)</span><br><span class="line">  personOne.career()</span><br><span class="line"></span><br><span class="line">  var teaMa = new Teacher(&apos;math&apos;)</span><br><span class="line">  console.log(teaMa);</span><br><span class="line">  teaMa.career()</span><br></pre></td></tr></table></figure></p>
+<p>Person是一个父类，子类Teacher想要继承父类，就在它的prototype指向变为一个新的父类实例，同时将prototype的constructor属性指向自己,如果constructor属性不指回自己的话，将会导致<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">console.log(teaMa.constructor === Person)  // true</span><br></pre></td></tr></table></figure></p>
+<p>这是一个重大错误，明明是Teacher实例化出来的，结果显示父类实例化的……<br>新实例化的Teacher有父类的name属性，这就实现了继承，同时Person和Teacher类都有career方法，他们通过函数覆盖实现了多态。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/18/Node笔记-fs文件模块/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1949,179 +2106,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/14/css的一个伪类，nth-child/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="geek720">
-      <meta itemprop="description" content="记录日常，谢谢大家">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="geek720的日常">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/12/14/css的一个伪类，nth-child/" class="post-title-link" itemprop="http://yoursite.com/index.html">css的一个伪类，nth-child</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-12-14 18:12:01" itemprop="dateCreated datePublished" datetime="2017-12-14T18:12:01+08:00">2017-12-14</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-20 18:13:15" itemprop="dateModified" datetime="2018-12-20T18:13:15+08:00">2018-12-20</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>之前在写移动端的项目的时候，对一些列表元素有一些需求<br>比如，你想要给列表里的前三个元素加上边框，后三个元素变灰….我以前的做法是用js在遍历数组的时候判断当前元素的index，然后用index做一些逻辑判断操作，来给这个元素加上想要的className，这样的做法需要做很多的js计算，频繁地去使用map函数和forEach函数，并要写很多的回调函数。<br>最近在看css权威指南，看到nth-child，他是一个伪类选择器，可以轻松地选取你想要的标签并给与修改添加样式（但是不支持低版本的IE！）</p>
-<ol>
-<li><p>:nth-child(2)选取第几个标签，“2可以是你想要的数字”</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.demo01 li:nth-child(2)&#123;background:#090&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>nth-child(n+4)选取大于等于4标签，nth-child(-n+4)选取小于等于4标签,“n”表示从整数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.demo01 li:nth-child(n+4)&#123;background:#090&#125;</span><br><span class="line">.demo01 li:nth-child(-n+4)&#123;background:#090&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>:nth-child(2n)选取偶数标签，nth-child(2n-1)选择奇数标签</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.demo01 li:nth-child(2n-1)&#123;background:#090&#125;</span><br><span class="line">.demo01 li:nth-child(2n)&#123;background:#090&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>:nth-child(3n+1)自定义选取标签，3n+1表示“隔二取一”</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.demo01 li:nth-child(3n+1)&#123;background:#090&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>这样的话，也就是说你想得到该有的函数，就可以模拟出js的逻辑判断操作。</p>
-<h2 id="同样的伪类选择器"><a href="#同样的伪类选择器" class="headerlink" title="同样的伪类选择器"></a>同样的伪类选择器</h2><ul>
-<li>nth-last-child() ： 选择倒数第几个标签</li>
-<li>last-child选取最后一个标签</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2169,7 +2153,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">15</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2200,7 +2184,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">8</span>
+                      
+                    
+                    <span class="site-state-item-count">9</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
