@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="之前上一篇文章讲了一些动画的实现，现在正式总结使用react搭一个modal的过程,在这个理我使用create-react-app来创建react app。 123456789101112131415161718192021222324252627import React from &amp;apos;react&amp;apos;;import PropTypes from &amp;apos;prop-types&amp;a">
+<meta name="keywords" content="react">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自己使用react写一个弹框组件（2)">
+<meta property="og:url" content="http://yoursite.com/2018/05/10/自己使用react写一个弹框组件（2/index.html">
+<meta property="og:site_name" content="geek720的日常">
+<meta property="og:description" content="之前上一篇文章讲了一些动画的实现，现在正式总结使用react搭一个modal的过程,在这个理我使用create-react-app来创建react app。 123456789101112131415161718192021222324252627import React from &amp;apos;react&amp;apos;;import PropTypes from &amp;apos;prop-types&amp;a">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-01-08T08:31:47.840Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="自己使用react写一个弹框组件（2)">
+<meta name="twitter:description" content="之前上一篇文章讲了一些动画的实现，现在正式总结使用react搭一个modal的过程,在这个理我使用create-react-app来创建react app。 123456789101112131415161718192021222324252627import React from &amp;apos;react&amp;apos;;import PropTypes from &amp;apos;prop-types&amp;a">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/10/自己使用react写一个弹框组件（2/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>自己使用react写一个弹框组件（2) | geek720的日常</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geek720的日常</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">一名不愿透露姓名的程序员</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/10/自己使用react写一个弹框组件（2/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">自己使用react写一个弹框组件（2)
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-10 16:30:47" itemprop="dateCreated datePublished" datetime="2018-05-10T16:30:47+08:00">2018-05-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-08 16:31:47" itemprop="dateModified" datetime="2019-01-08T16:31:47+08:00">2019-01-08</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>之前上一篇文章讲了一些动画的实现，现在正式总结使用react搭一个modal的过程,在这个理我使用create-react-app来创建react app。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">import React from &apos;react&apos;;</span><br><span class="line">import PropTypes from &apos;prop-types&apos;</span><br><span class="line">import &apos;./SevenModal.css&apos;</span><br><span class="line">class SevenModal extends React.Component &#123;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    return (</span><br><span class="line">        &lt;div className=&quot;sevenmodal-wrapper&quot;&gt;</span><br><span class="line">          &#123;</span><br><span class="line">              &lt;div className=&quot;sevenmodal&quot;&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-title&quot;&gt;这是modal标题&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-content&quot;&gt;这是modal内容&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-operator&quot;&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-close&quot;&gt;取消&lt;/button&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-confirm&quot;&gt;确认&lt;/button&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">              &lt;/div&gt;</span><br><span class="line">              &lt;div className=&quot;sevenmodal-mask&quot;&gt;&lt;/div&gt; </span><br><span class="line">          &#125;</span><br><span class="line">        &lt;/div&gt; </span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">SevenModal.defaultProps = &#123;&#125;</span><br><span class="line">SevenModal.propTypes = &#123;&#125;</span><br><span class="line">  </span><br><span class="line">export default SevenModal</span><br></pre></td></tr></table></figure>
+<p>这是写一个react’组件的基础模式，需要的文件有SevenModal.css， 这是放css样式的地方。</p>
+<h3 id="加上回调事件以及相关属性"><a href="#加上回调事件以及相关属性" class="headerlink" title="加上回调事件以及相关属性"></a>加上回调事件以及相关属性</h3><p>要使弹框组件能够正常关闭，需要一个能控制它显示和关闭的属性，visable，以及两个回调事件，即点击确认和点击取消的两个回调事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">state = &#123; visible: false, &#125;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"></span><br><span class="line">  ........</span><br><span class="line"></span><br><span class="line">*/</span><br><span class="line">SevenModal.defaultProps = &#123;&#125;</span><br><span class="line">SevenModal.propTypes = &#123;</span><br><span class="line">  visible: PropTypes.bool,</span><br><span class="line">  onConfirm: PropTypes.func,</span><br><span class="line">  onClose: PropTypes.func</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>回调事件是react父子组件间通讯方式之一，子组件调用从父组件传下来的回调函数（通常作为props传给子组件），父组件的相关函数就执行了，如果把参数传入回调函数内，父组件的相应函数也能接收到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">closeModal = () =&gt; &#123;</span><br><span class="line">    const &#123; onClose &#125; = this.props</span><br><span class="line">    onClose &amp;&amp; onClose()</span><br><span class="line">    this.setState(&#123;</span><br><span class="line">      visable: false,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">confirmModal = () =&gt; &#123;</span><br><span class="line">    const &#123; onConfirm &#125; = this.props</span><br><span class="line">    onConfirm &amp;&amp; onConfirm()</span><br><span class="line">    this.setState(&#123;</span><br><span class="line">        visable: false,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将这两个写好的函数绑定在确认和取消的onClick事件里边。visable作为控制弹框显示关闭的一个状态。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">render() &#123;</span><br><span class="line">       &lt;div className=&quot;sevenmodal-wrapper&quot;&gt;</span><br><span class="line">          &#123;</span><br><span class="line">            visible &amp;&amp;</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">              &lt;div className=&#123;`sevenmodal $&#123;classes&#125;`&#125;&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-title&quot;&gt;这是modal标题&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-content&quot;&gt;这是modal内容&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-operator&quot;&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-close&quot; onClick=&#123;this.closeModal&#125;&gt;取消&lt;/button&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-confirm&quot; onClick=&#123;this.confirmModal&#125;&gt;确认&lt;/button&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">              &lt;/div&gt;</span><br><span class="line">              &lt;div className=&#123;`sevenmodal-mask $&#123;maskClasses&#125;`&#125; onClick=&#123;this.maskClick&#125;&gt;&lt;/div&gt; </span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">          &#125;</span><br><span class="line">        &lt;/div&gt; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="样式"><a href="#样式" class="headerlink" title="样式"></a>样式</h3><p>样式是由两部分组成，一部分是modal组件主体的内容，即modal的标题和内容，以及确认和取消按钮。还有一部分是蒙层。两部分都采用fixed作为position，因为这两部分都是针对于body布局，而fixed正式一种基于body移动的absolute。同时设定两个z-index都在9000以上，这样保证了两个div都是在最上面显示。但是modal主体的div的zindex只要比蒙层的div多个一点点就可以了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">.sevenmodal &#123;</span><br><span class="line">  position: fixed;</span><br><span class="line">  width: 300px;</span><br><span class="line">  height: 200px;</span><br><span class="line">  top: 0;</span><br><span class="line">  left: 0;</span><br><span class="line">  right: 0;</span><br><span class="line">  bottom: 0;</span><br><span class="line">  margin: auto;</span><br><span class="line">  border-radius: 5px;</span><br><span class="line">  background: #fff;</span><br><span class="line">  overflow: hidden;</span><br><span class="line">  z-index: 9999;</span><br><span class="line">  box-shadow: inset 0 0 1px 0 #000;</span><br><span class="line">&#125;</span><br><span class="line">.sevenmodal-mask &#123;</span><br><span class="line">  position: fixed;</span><br><span class="line">  top: 0;</span><br><span class="line">  left: 0;</span><br><span class="line">  right: 0;</span><br><span class="line">  bottom: 0;</span><br><span class="line">  background: #000;</span><br><span class="line">  opacity: .6;</span><br><span class="line">  z-index: 9998;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/react/" rel="tag"># react</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/08/自己使用react写一个弹框组件（1/" rel="next" title="自己使用react写一个弹框组件（1)">
+                <i class="fa fa-chevron-left"></i> 自己使用react写一个弹框组件（1)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/11/自己使用react写一个弹框组件（3/" rel="prev" title="自己使用react写一个弹框组件（3)">
+                自己使用react写一个弹框组件（3) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">geek720</p>
+              <p class="site-description motion-element" itemprop="description">记录日常，谢谢大家</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#加上回调事件以及相关属性"><span class="nav-number">1.</span> <span class="nav-text">加上回调事件以及相关属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#样式"><span class="nav-number">2.</span> <span class="nav-text">样式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geek720</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

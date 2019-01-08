@@ -304,6 +304,522 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/10/自己使用react写一个弹框组件（2/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/10/自己使用react写一个弹框组件（2/" class="post-title-link" itemprop="http://yoursite.com/page/2/index.html">自己使用react写一个弹框组件（2)</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-10 16:30:47" itemprop="dateCreated datePublished" datetime="2018-05-10T16:30:47+08:00">2018-05-10</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-08 16:31:47" itemprop="dateModified" datetime="2019-01-08T16:31:47+08:00">2019-01-08</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>之前上一篇文章讲了一些动画的实现，现在正式总结使用react搭一个modal的过程,在这个理我使用create-react-app来创建react app。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">import React from &apos;react&apos;;</span><br><span class="line">import PropTypes from &apos;prop-types&apos;</span><br><span class="line">import &apos;./SevenModal.css&apos;</span><br><span class="line">class SevenModal extends React.Component &#123;</span><br><span class="line"></span><br><span class="line">  render() &#123;</span><br><span class="line">    return (</span><br><span class="line">        &lt;div className=&quot;sevenmodal-wrapper&quot;&gt;</span><br><span class="line">          &#123;</span><br><span class="line">              &lt;div className=&quot;sevenmodal&quot;&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-title&quot;&gt;这是modal标题&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-content&quot;&gt;这是modal内容&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-operator&quot;&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-close&quot;&gt;取消&lt;/button&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-confirm&quot;&gt;确认&lt;/button&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line">              &lt;/div&gt;</span><br><span class="line">              &lt;div className=&quot;sevenmodal-mask&quot;&gt;&lt;/div&gt; </span><br><span class="line">          &#125;</span><br><span class="line">        &lt;/div&gt; </span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">SevenModal.defaultProps = &#123;&#125;</span><br><span class="line">SevenModal.propTypes = &#123;&#125;</span><br><span class="line">  </span><br><span class="line">export default SevenModal</span><br></pre></td></tr></table></figure>
+<p>这是写一个react’组件的基础模式，需要的文件有SevenModal.css， 这是放css样式的地方。</p>
+<h3 id="加上回调事件以及相关属性"><a href="#加上回调事件以及相关属性" class="headerlink" title="加上回调事件以及相关属性"></a>加上回调事件以及相关属性</h3><p>要使弹框组件能够正常关闭，需要一个能控制它显示和关闭的属性，visable，以及两个回调事件，即点击确认和点击取消的两个回调事件。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">state = &#123; visible: false, &#125;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"></span><br><span class="line">  ........</span><br><span class="line"></span><br><span class="line">*/</span><br><span class="line">SevenModal.defaultProps = &#123;&#125;</span><br><span class="line">SevenModal.propTypes = &#123;</span><br><span class="line">  visible: PropTypes.bool,</span><br><span class="line">  onConfirm: PropTypes.func,</span><br><span class="line">  onClose: PropTypes.func</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>回调事件是react父子组件间通讯方式之一，子组件调用从父组件传下来的回调函数（通常作为props传给子组件），父组件的相关函数就执行了，如果把参数传入回调函数内，父组件的相应函数也能接收到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">closeModal = () =&gt; &#123;</span><br><span class="line">    const &#123; onClose &#125; = this.props</span><br><span class="line">    onClose &amp;&amp; onClose()</span><br><span class="line">    this.setState(&#123;</span><br><span class="line">      visable: false,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">confirmModal = () =&gt; &#123;</span><br><span class="line">    const &#123; onConfirm &#125; = this.props</span><br><span class="line">    onConfirm &amp;&amp; onConfirm()</span><br><span class="line">    this.setState(&#123;</span><br><span class="line">        visable: false,</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将这两个写好的函数绑定在确认和取消的onClick事件里边。visable作为控制弹框显示关闭的一个状态。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">render() &#123;</span><br><span class="line">       &lt;div className=&quot;sevenmodal-wrapper&quot;&gt;</span><br><span class="line">          &#123;</span><br><span class="line">            visible &amp;&amp;</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">              &lt;div className=&#123;`sevenmodal $&#123;classes&#125;`&#125;&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-title&quot;&gt;这是modal标题&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-content&quot;&gt;这是modal内容&lt;/div&gt;</span><br><span class="line">                &lt;div className=&quot;sevenmodal-operator&quot;&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-close&quot; onClick=&#123;this.closeModal&#125;&gt;取消&lt;/button&gt;</span><br><span class="line">                  &lt;button className=&quot;sevenmodal-operator-confirm&quot; onClick=&#123;this.confirmModal&#125;&gt;确认&lt;/button&gt;</span><br><span class="line">                &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">              &lt;/div&gt;</span><br><span class="line">              &lt;div className=&#123;`sevenmodal-mask $&#123;maskClasses&#125;`&#125; onClick=&#123;this.maskClick&#125;&gt;&lt;/div&gt; </span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">          &#125;</span><br><span class="line">        &lt;/div&gt; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="样式"><a href="#样式" class="headerlink" title="样式"></a>样式</h3><p>样式是由两部分组成，一部分是modal组件主体的内容，即modal的标题和内容，以及确认和取消按钮。还有一部分是蒙层。两部分都采用fixed作为position，因为这两部分都是针对于body布局，而fixed正式一种基于body移动的absolute。同时设定两个z-index都在9000以上，这样保证了两个div都是在最上面显示。但是modal主体的div的zindex只要比蒙层的div多个一点点就可以了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">.sevenmodal &#123;</span><br><span class="line">  position: fixed;</span><br><span class="line">  width: 300px;</span><br><span class="line">  height: 200px;</span><br><span class="line">  top: 0;</span><br><span class="line">  left: 0;</span><br><span class="line">  right: 0;</span><br><span class="line">  bottom: 0;</span><br><span class="line">  margin: auto;</span><br><span class="line">  border-radius: 5px;</span><br><span class="line">  background: #fff;</span><br><span class="line">  overflow: hidden;</span><br><span class="line">  z-index: 9999;</span><br><span class="line">  box-shadow: inset 0 0 1px 0 #000;</span><br><span class="line">&#125;</span><br><span class="line">.sevenmodal-mask &#123;</span><br><span class="line">  position: fixed;</span><br><span class="line">  top: 0;</span><br><span class="line">  left: 0;</span><br><span class="line">  right: 0;</span><br><span class="line">  bottom: 0;</span><br><span class="line">  background: #000;</span><br><span class="line">  opacity: .6;</span><br><span class="line">  z-index: 9998;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/08/自己使用react写一个弹框组件（1/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/08/自己使用react写一个弹框组件（1/" class="post-title-link" itemprop="http://yoursite.com/page/2/index.html">自己使用react写一个弹框组件（1)</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-08 16:30:13" itemprop="dateCreated datePublished" datetime="2018-05-08T16:30:13+08:00">2018-05-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-01-08 16:30:40" itemprop="dateModified" datetime="2019-01-08T16:30:40+08:00">2019-01-08</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>最近在自己做一个晓得websocket项目，首页需要一个登录的页面，这个登录页面是一个弹框。以前使用弹框总是用现成的组件，比如antd的ui库里边的Modal， 这种使用起来也非常的方便，但是，今天想自己实现一个弹框组件。</p>
+<h2 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h2><p>要写一个弹框，有以下难点</p>
+<ul>
+<li>蒙层， 弹框显示的时候需要将后面的dom元素隐藏。</li>
+<li>弹框内容dom化， 作为一个组件，灵活是必须的，首先需要将内容可定制</li>
+<li>动画， 弹框的入场和离场等动效。</li>
+<li>组件间的通信以及解耦， 确认和取消的回调，以及在dom分层上实现与父组件隔离</li>
+</ul>
+<h4 id="1-动画"><a href="#1-动画" class="headerlink" title="1.动画"></a>1.动画</h4><p>&nbsp;&nbsp;&nbsp;&nbsp;我觉得动画是最难的，首先react组件不像之前对于Jquery式的过程式开发，如果是jquery，通过id拿到dom节点实例，之后通过修改这个节点的style和class，就能达到效果。同样的，react也可以这样开发，通过refs去拿实例节点。通过修改class去达到实现动画的目的，这两种开发方式是都可行的。<br>&nbsp;&nbsp;&nbsp;&nbsp;但是，react是状态态是开发，听前辈们说，这种开发框架的本意是通过修改state的状态来达到控制页面的dom元素。如果使用refs去拿实例节点去显式的去修改，那还不如用jquery方便好写。<br>&nbsp;&nbsp;&nbsp;&nbsp; 那么我们可以将classname作为一个state，使用定时器，延时控制classname的改变。</p>
+<h4 id="2-动画的使用"><a href="#2-动画的使用" class="headerlink" title="2. 动画的使用"></a>2. 动画的使用</h4><blockquote>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Transitions/Using_CSS_transitions</a></p>
+</blockquote>
+<h5 id="transform"><a href="#transform" class="headerlink" title="transform"></a>transform</h5><blockquote>
+<p>CSS transform属性允许你旋转，缩放，倾斜或平移给定元素。这是通过修改CSS视觉格式化模型的坐标空间来实现的。</p>
+</blockquote>
+<p>这里常用的几个属性就是： scale， rotate， translate， 分别对应缩放， 旋转和平移，后缀加上x或者y就是朝它们的x或者y轴做操作，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rotateX(10deg);</span><br><span class="line">translate3D(12deg, 13deg, 14deg)</span><br><span class="line">scaleY(10deg)</span><br></pre></td></tr></table></figure></p>
+<p>后缀3D和2D分别作3D和2D动画，但是要注意：</p>
+<blockquote>
+<p>Internet Explorer 10、Firefox、Opera 支持 transform 属性。<br>Internet Explorer 9 支持替代的 -ms-transform 属性（仅适用于 2D 转换）。<br>Safari 和 Chrome 支持替代的 -webkit-transform 属性（3D 和 2D 转换）。<br>Opera 只支持 2D 转换。</p>
+</blockquote>
+<h5 id="transition"><a href="#transition" class="headerlink" title="transition"></a>transition</h5><p>Transitions可以为一个元素在不同状态之间切换的时候定义不同的过渡效果。比如在不同的伪元素之间切换，它是一个简写的属性，用于设置四个过渡属性：transition-property（过渡的类型）、transition-duration（过渡的持续时间）、transition-timing-function（过渡速度效果的速度曲线）、transition-delay（规定过渡从何时开始），一般设置只设置前两个属性， 后面两个很少用，涉及到极为高深的数学。示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  width:100px;</span><br><span class="line">  height:100px;</span><br><span class="line">  background:blue;</span><br><span class="line">  transition:width 2s;</span><br><span class="line">  -moz-transition:width 2s; /* Firefox 4 */</span><br><span class="line">  -webkit-transition:width 2s; /* Safari and Chrome */</span><br><span class="line">  -o-transition:width 2s; /* Opera */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/20/css3的margin中的负值的深入研究/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2017/12/20/css3的margin中的负值的深入研究/" class="post-title-link" itemprop="http://yoursite.com/page/2/index.html">css3的margin中的负值的深入研究</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-20 18:12:17" itemprop="dateCreated datePublished" datetime="2017-12-20T18:12:17+08:00">2017-12-20</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-20 18:12:50" itemprop="dateModified" datetime="2018-12-20T18:12:50+08:00">2018-12-20</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>今天看到别人的代码，发现有位大神写了如下代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">margin-left:-100px</span><br></pre></td></tr></table></figure></p>
+<p>以前也一直用margin这个属性，但是从来没有用过负值，虽然有在别的文章中看到过负值的使用场景，但是一直觉得它是一个无用属性，如果css迭代版本的话，应该会取消这种用法……<br>但是还是太年轻，去网上查了下</p>
+<ul>
+<li>负margin是绝对标准的CSS，W3C甚至标注过：对于margin属性来说，负值是被允许的。</li>
+<li>完全兼容 并且所有现代浏览器都支持这种负值</li>
+</ul>
+<p>好吧，我现在承认有必要去使用下这种hack方法，如果使用得当，应该会是一个很强大的属性。</p>
+<h3 id="表现"><a href="#表现" class="headerlink" title="表现"></a>表现</h3><p>首先在两个display为block的元素，并且这两个元素没有使用浮动：</p>
+<ol>
+<li>当A元素的margin-top/margin-left被赋予负值时，A元素将被拉进指定的方向。比如向上或者向左<br><img src="https://upload-images.jianshu.io/upload_images/2204576-cbf940603ce8dc0f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="A元素的margin-top/margin-left被赋予负值时"></li>
+<li>但是当A元素margin-bottom/right为负数，A元素并不会如你所想的那样向下/右移动，而是将后续的元素拖拉进来，覆盖本来的元素。<br><img src="https://upload-images.jianshu.io/upload_images/2204576-c464cc4cbf206276.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="A元素margin-bottom/right为负数"></li>
+<li>虽然margin可以应用到所有元素，但display属性不同时，表现也不同，比如inline的上下margin就会无效。block的四个方向的margin都会有效，这个很好理解。</li>
+</ol>
+<h3 id="重叠"><a href="#重叠" class="headerlink" title="重叠"></a>重叠</h3><p>如果margin设置成了负值，大多数情况下后面的元素会覆盖前面的元素，但是，也不总是，具体覆盖情况要分为背景和内容，以及display的属性。<br>在普通流布局中，浏览器将页面布局分为内容和背景，内容的层叠显示始终高于背景。block元素分为内容和背景，而inline元素或inline-block元素，它本身就是内容(包括其背景等样式设置)<br>总结一下就是，</p>
+<ul>
+<li>在两个block元素重叠后，后面元素可以覆盖前面元素的背景，但无法覆盖其内容</li>
+<li>当两个inline元素，或两个line-block元素，或inline与inline-block元素重叠时，后面元素可以覆盖前面元素的背景和内容。</li>
+<li>如果两者和浮动元素重叠，那么内容将会在浮动元素之上显示，但是背景可能就会被浮动元素覆盖。<br>其实这个没有什么意义，真的想要显示在最上面，使用z-index就可以了嘛</li>
+</ul>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ul>
+<li>水平垂直居中，但是有要求，要居中的元素的宽/高是不变的或者说是确定的，比如width/height=100px,那么设置absolute的top/left=50%，然后margin-left/margin-top=-50px即可.但是这个场景用的不多。<br>如果要居中的元素的宽/高是不确定的，这时margin负值就不能使用具体的px了，可以使用百分比。但由于margin的百分比都是相对于包含块的宽度，所以这里限制了只能设置宽高相同的居中元素。包含块的宽度如何获得呢？利用absolute的包裹性，在需要居中的元素外面套一个空的<div>元素即可<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">  &lt;meta charset=&quot;utf-8&quot; /&gt;</span><br><span class="line">  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;</span><br><span class="line">  &lt;title&gt;垂直居中&lt;/title&gt;</span><br><span class="line">  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;</span><br><span class="line">  &lt;style&gt;</span><br><span class="line">  .box&#123;</span><br><span class="line">     position:relative;</span><br><span class="line">     width: 200px;</span><br><span class="line">     height: 200px;</span><br><span class="line">     background-color: lightgreen;</span><br><span class="line">     border: 2px solid black;</span><br><span class="line">    &#125;</span><br><span class="line">  .out&#123;</span><br><span class="line">    position: absolute;</span><br><span class="line">    left: 50%;</span><br><span class="line">    top: 50%;</span><br><span class="line">  &#125;    </span><br><span class="line">  .in&#123;</span><br><span class="line">    height: 100px;</span><br><span class="line">    width: 100px;</span><br><span class="line">    background-color: pink;</span><br><span class="line">    margin-left: -50%;</span><br><span class="line">    margin-top: -50%;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  &lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;div class=&quot;box&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;out&quot;&gt;</span><br><span class="line">        &lt;div class=&quot;in&quot;&gt;测试内容&lt;/div&gt;    </span><br><span class="line">    &lt;/div&gt; </span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+</div></li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/2204576-0e64a2e4efcaea43.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="水平垂直居中"></p>
+<ul>
+<li>三栏自适应布局</li>
+</ul>
+<p>中间的主体使用双层标签，外层<div>宽度100%显示，并且浮动，内层<div>为真正的主体内容，含有左右110px的margin值。左栏和右栏都采用margin负值。左栏左浮动，margin-left为-100%，正好使左栏位于页面左侧。右栏左浮动，大小为其本身的宽度100px<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">  &lt;meta charset=&quot;utf-8&quot; /&gt;</span><br><span class="line">  &lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge&quot;&gt;</span><br><span class="line">  &lt;title&gt;垂直居中&lt;/title&gt;</span><br><span class="line">  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;</span><br><span class="line">  &lt;style&gt;</span><br><span class="line">  html,body&#123;</span><br><span class="line">      height: 100%;</span><br><span class="line">  &#125;</span><br><span class="line">  body&#123;</span><br><span class="line">      margin: 0;</span><br><span class="line">  &#125;</span><br><span class="line">  .main&#123;</span><br><span class="line">      width: 100%;</span><br><span class="line">      height: 100%;</span><br><span class="line">      float: left;</span><br><span class="line">  &#125;</span><br><span class="line">  .main .in&#123;</span><br><span class="line">      margin: 0 110px;</span><br><span class="line">      background-color: pink;</span><br><span class="line">      height: 100%;</span><br><span class="line">  &#125;</span><br><span class="line">  .left&#123;</span><br><span class="line">      height: 100%;</span><br><span class="line">      width: 100px;</span><br><span class="line">      float: left;</span><br><span class="line">      background-color: lightgreen;</span><br><span class="line">      margin-left: -100%;</span><br><span class="line">  &#125;</span><br><span class="line">  .right&#123;</span><br><span class="line">      height: 100%;</span><br><span class="line">      width: 100px;</span><br><span class="line">      float: left;</span><br><span class="line">      background-color: lightgreen;</span><br><span class="line">      margin-left: -100px;</span><br><span class="line">  &#125;</span><br><span class="line">  &lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  &lt;div class=&quot;main&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;in&quot;&gt;content&lt;/div&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">  &lt;div class=&quot;left&quot;&gt;left slider&lt;/div&gt;</span><br><span class="line">  &lt;div class=&quot;right&quot;&gt;right slider&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></div></div></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2204576-224174495d41d59c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="三栏自适应布局"></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/12/14/css的一个伪类，nth-child/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1221,7 +1737,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">15</span>
+                    <span class="site-state-item-count">18</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1254,7 +1770,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">9</span>
+                      
+                    
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
@@ -1293,7 +1811,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
