@@ -304,6 +304,166 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/18/axios封装属于自己业务的请求库总结/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/03/18/axios封装属于自己业务的请求库总结/" class="post-title-link" itemprop="http://yoursite.com/index.html">axios封装属于自己业务的请求库总结</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-18 14:01:46 / 修改时间：14:02:21" itemprop="dateCreated datePublished" datetime="2019-03-18T14:01:46+08:00">2019-03-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>数据请求是我们开发中非常重要的一环，如何优雅地进行抽象处理，不是一件很容易的事情，也是经常被忽略的事情，处理不好的话，重复的代码散落在各处，维护成本极高。<br>所以我们需要好好梳理下数据请求涉及到哪些方面，对它有整体的管控，从而设计出扩展性高的方案。</p>
+<h3 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h3><p>首先，我们处理下参数的配置，</p>
+<ul>
+<li>首先需要防止 CSRF，那我们需要在请求中的 headers 加上 X-XSRF-TOKEN</li>
+<li>还需要一个params请求体，请求体需要在post和get请求做一个区分</li>
+<li>除了防止csrf的header配置，如果另外请求有别的配置，比如content-type之类的，需要一个config<br>所以，我们将这一部分，封装成一个request.js文件，并export出几个请求方法，post和get<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import axios from &apos;axios&apos;;</span><br><span class="line"></span><br><span class="line">// The http header that carries the xsrf token value &#123; X-XSRF-TOKEN: &apos;&apos; &#125;</span><br><span class="line">const csrfConfig = &#123;</span><br><span class="line">  &apos;X-XSRF-TOKEN&apos;: &apos;&apos;,</span><br><span class="line">&#125;;</span><br><span class="line">// Build uniform request</span><br><span class="line">async function buildRequest(method, url, params, options) &#123;</span><br><span class="line">  let param = &#123;&#125;;</span><br><span class="line">  let config = &#123;&#125;;</span><br><span class="line">  if (method === &apos;get&apos;) &#123;</span><br><span class="line">    param = &#123; params, ...options &#125;;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    param = JSON.stringify(params);</span><br><span class="line">    config = &#123;</span><br><span class="line">      headers: &#123;</span><br><span class="line">        ...csrfConfig,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    config = Object.assign(&#123;&#125;, config, options);</span><br><span class="line">  &#125;</span><br><span class="line">  return axios[method](url, param, config);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export const get = (url, params = &#123;&#125;, options) =&gt; buildRequest(&apos;get&apos;, url, params, options);</span><br><span class="line">export const post = (url, params = &#123;&#125;, options) =&gt; buildRequest(&apos;post&apos;, url, params, options);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这样的话，我们对外就暴露出 get 和 post 的方法，其他请求类似，在此只用 get 和 post 作为示例，入参分别是 API地址，数据 和 扩展配置</p>
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><ul>
+<li>全局异常，也可以说是通用的异常，比如服务端返回503，网络异常，登录失效，无权限等，这些异常是可以预料并可控的，只要和服务端约定好格式，捕获下异常再展示出来即可。</li>
+<li>业务异常，指的是和业务逻辑紧密相关的，比如提交失败，数据校验失败等，这些异常往往每个接口有不一样的情况，而且需要个性化展示错误，所以这部分可能不能进行统一处理，有时候需要把展示错误交到 View 层去实现。<br>之前的方案是在请求中不断地去catch，但是发现这样冗余代码太多，如果这部分异常处理需要抽象出来，则要用到axios 提供的 interceptors 功能，这样可以将异常的处理和核心的请求方法隔离出来，毕竟这部分是要和 UI 进行交互的。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">import axios from &apos;axios&apos;;</span><br><span class="line"></span><br><span class="line">// Add a response interceptor</span><br><span class="line">axios.interceptors.response.use((response) =&gt; &#123;</span><br><span class="line">  const &#123; config, data &#125; = response;</span><br><span class="line">  // 和服务端约定的 Code</span><br><span class="line">  const &#123; code &#125; = data;</span><br><span class="line">  switch (code) &#123;</span><br><span class="line">    case 200:</span><br><span class="line">      return data;</span><br><span class="line">    case 401:</span><br><span class="line">      // 登录失效</span><br><span class="line">      break;</span><br><span class="line">    case 403:</span><br><span class="line">      // 无权限</span><br><span class="line">      break;</span><br><span class="line">    default:</span><br><span class="line">      break;</span><br><span class="line">  &#125;</span><br><span class="line">  if (config.showError) &#123;</span><br><span class="line">    // 接口配置指定需要个性化展示错误</span><br><span class="line">    return Promise.reject(data);</span><br><span class="line">  &#125;</span><br><span class="line">  // 默认展示错误</span><br><span class="line">  // ... Toast error</span><br><span class="line">&#125;, (error) =&gt; &#123;</span><br><span class="line">  // 通用错误</span><br><span class="line">  if (axios.isCancel(error)) &#123;</span><br><span class="line">    // Request cancel</span><br><span class="line">  &#125; else if (navigator &amp;&amp; !navigator.onLine) &#123;</span><br><span class="line">    // Network is disconnect</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // Other error</span><br><span class="line">  &#125;</span><br><span class="line">  return Promise.reject(error);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="请求监控"><a href="#请求监控" class="headerlink" title="请求监控"></a>请求监控</h3><p>请求监控这块和异常处理类似，只不过这里只是记录情况，不涉及到 UI 上的交互或者和业务代码的交互，所以可以把这部分逻辑直接写在异常处理那里，或者在请求后再添加一个拦截器，单独处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">axios.interceptors.response.use((response) =&gt; &#123;</span><br><span class="line">  const &#123; status, data, config &#125; = response;</span><br><span class="line">  // 根据返回的数据和接口参数配置，对请求进行埋点</span><br><span class="line">&#125;, (error) =&gt; &#123;</span><br><span class="line">  // 根据返回的数据和接口参数配置，对请求进行埋点</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>好了，到现在为止，参数配置、异常处理 和 请求监控 都设计完了，有三个文件：</p>
+<p>request.js：请求库配置，对外暴露出 get，post 方法。<br>error.js：请求的一些异常处理，涉及到和外面对接的是该接口是否需要个性化展示错误。<br>monitor.js：请求的情况记录，比较独立的一块。</p>
+<p>那在页面上调用的时候可以这样子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import &#123; get, post &#125; from &apos;request.js&apos;;</span><br><span class="line"></span><br><span class="line">get(&apos;/user/info&apos;).then((data) =&gt; &#123;&#125;);</span><br><span class="line">post(&apos;/user/update&apos;, &#123; name: &apos;beyondxgb&apos; &#125;, &#123; showError: true &#125;).then((data) =&gt; &#123;</span><br><span class="line">  if (data.code !== 200) &#123;</span><br><span class="line">    // 展示错误</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // do something</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/在vue下封装echarts公共组件的总结/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -366,7 +526,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-03-17 16:53:27" itemprop="dateModified" datetime="2019-03-17T16:53:27+08:00">2019-03-17</time>
+                <time title="修改时间：2019-03-18 14:02:19" itemprop="dateModified" datetime="2019-03-18T14:02:19+08:00">2019-03-18</time>
               
             
           </span>
@@ -1917,212 +2077,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/08/html-DOCTYPE的深入研究/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="geek720">
-      <meta itemprop="description" content="记录日常，谢谢大家">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="geek720的日常">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/08/html-DOCTYPE的深入研究/" class="post-title-link" itemprop="http://yoursite.com/index.html">html-DOCTYPE的深入研究</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-08 16:56:03" itemprop="dateCreated datePublished" datetime="2018-12-08T16:56:03+08:00">2018-12-08</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-13 15:01:00" itemprop="dateModified" datetime="2018-12-13T15:01:00+08:00">2018-12-13</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近在写原生的html代码，突然记起以前在大学里学html的时候，那个时候还是html4，没有像现在html5这样简洁的声明方式，尤其是doctype这一块。现在特地去查了资料，深入了解这一狂的内容。</p>
-<h2 id="浏览器的呈现的模式"><a href="#浏览器的呈现的模式" class="headerlink" title="浏览器的呈现的模式"></a>浏览器的呈现的模式</h2><p>在早期的html代码中，不是所有的开发者都会遵循标准去写，因为随着时间的变化，标准也会不断改变，所以现代的浏览器都有着不同的呈现模式去兼容一些老的代码。</p>
-<ol>
-<li>Standards(标准)模式：遵循最新标准。</li>
-<li>Quirks（怪癖/兼容）模式：帮助处理所有奇怪的渲染和非浏览器兼容及不符合标准的网页。</li>
-<li>Almost Standards（近似标准）模式：针对标准的某个老版本设计的网页。</li>
-</ol>
-<p>其中doctype就是可以指定浏览器按照不同的解析规则去选择呈现模式的一个标记，</p>
-<blockquote>
-<p>DOCTYPE声明告诉类似的代码校验器或者浏览器应该按照什么规则集解析文档，这些“规则”就是W3C发表的文档类型定义（DTD）中包含的规则。</p>
-</blockquote>
-<p>以上是DOCTYPE的作用，同时它也有一个有效性验证的作用，具体表现在，<br>如果发送具有正确的MIME类型的XHTML文档，理解XML的浏览器将不显示无效的页面。因为浏览器需要知道要使用什么DTD才能正确地处理页面，所以对页面进行有效性验证时要求有DOCTYPE声明。</p>
-<h2 id="DTD文档类型定义"><a href="#DTD文档类型定义" class="headerlink" title="DTD文档类型定义"></a>DTD文档类型定义</h2><p>那么既然doctype是根据dtd的文档定义去选择呈现模式，我又去查询了一下这个dtd。</p>
-<blockquote>
-<p>DTD中包含了一系列标记、属性，用于标记Web文档中能出现哪些元素和元素之间的包含关系。如果没有指定有效的DOCTYPE声明，浏览器可能会使用内置的默认DTD。你也可以自定义DTD，但一般不推荐这样。常见的DOCTYPE声明如下：</p>
-</blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">HTML 2：</span><br><span class="line">&lt;!DOCTYPE html PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span><br><span class="line"></span><br><span class="line">HTML 3.2：</span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 3.2 Final//EN&quot;&gt;</span><br><span class="line"></span><br><span class="line">HTML 4.01 Strict：</span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/strict.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">HTML 4.01 Transitional：</span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">HTML 4.01 Frameset：</span><br><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.01 Frameset//EN&quot; &quot;http://www.w3.org/TR/html4/frameset.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">XHTML 1.0 Strict：</span><br><span class="line">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Strict//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">XHTML 1.0 Transitional：</span><br><span class="line">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">XHTML 1.0 Frameset：</span><br><span class="line">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.0 Frameset//EN&quot; &quot;http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">XHTML 1.1：</span><br><span class="line">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.1//EN&quot; &quot;http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd&quot;&gt;</span><br><span class="line"></span><br><span class="line">XHTML 1.1 plus MathML plus SVG：</span><br><span class="line">&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN&quot; &quot;http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd&quot;&gt;</span><br></pre></td></tr></table></figure>
-<p>……那为啥我写html5的时候只有简短的一句话？<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br></pre></td></tr></table></figure></p>
-<h2 id="html5和html4的区别"><a href="#html5和html4的区别" class="headerlink" title="html5和html4的区别"></a>html5和html4的区别</h2><p>原来以上是html4的写法，区别在于…..</p>
-<ul>
-<li>HTML5 不基于 SGML，因此不需要对DTD进行引用，但是需要doctype来规范浏览器的行为（让浏览器按照它们应该的方式来运行）</li>
-<li>而HTML4.01基于SGML,所以需要对DTD进行引用，才能告知浏览器文档所使用的文档类型</li>
-</ul>
-<h2 id="SGML和XML以及HTML"><a href="#SGML和XML以及HTML" class="headerlink" title="SGML和XML以及HTML"></a>SGML和XML以及HTML</h2><p>那么问题来了，这个sgml是啥……这里我引用一下一个连接，很关键，这里介绍的很全</p>
-<blockquote>
-<p><a href="http://www.worldhello.net/doc/docbook_howto/ar01s04s01.html" target="_blank" rel="noopener">http://www.worldhello.net/doc/docbook_howto/ar01s04s01.html</a></p>
-</blockquote>
-<p>sgml是一种通用标准标记语言，xml是一种可扩展标记语言，xml是sgml的子集，这里发现了一个共同点，标记语言！没错，html的全称是超文本标记语言，没错，它也是一种标记语言！<br>经过一番调查，发现</p>
-<ul>
-<li><p>SGML是现时常用的超文本格式的最高层级标准,是可以定义标记语言的元语言,甚至可以定义不必采用&lt; &gt;的常规方式.(来自wiki)</p>
-</li>
-<li><p>XML是用来传送及携带数据信息,不用来表现或展示数据</p>
-</li>
-<li>HTML语言则用来表示数据.XML是从SGML简化修改出来的.</li>
-</ul>
-<p>也就是说，SGML可以算是XML和HTML的parent,SGML提供了一种定义标记语言的方式,告诉他的child可以做什么不可以做什么,必须包括什么元素,例如标签,以及语言的基本结构.<br>在介绍sgml的时候发现</p>
-<blockquote>
-<p>利用SGML创建了HTML参照和必须共同遵守的DTD,你会经常在HTML页面的头部发现“DOCTYPE”属性，用来定义用于解析目标DTD，</p>
-</blockquote>
-<p>这就是html4遵循的sgml为什么要写这么长了，html5写那么短是因为它没有基于SGML而基于XML所以不需要引用DTD。<br>而且现在解析SGML是一件麻烦的事情,所以创建了XML更简化.例如：在SGML中你必须使用起始和结束标签，但是在XML你可以有自动关闭的结束标签</p>
-<h2 id="DOCTYPE切换"><a href="#DOCTYPE切换" class="headerlink" title="DOCTYPE切换"></a>DOCTYPE切换</h2><p>在网上查资料的时候看到</p>
-<blockquote>
-<p>浏览器根据不同的DOCTYPE选择不同的渲染方法就叫做DOCTYPE切换。 其实DOCTYPE切换就是用来识别和兼容旧网页的。</p>
-</blockquote>
-<p>总结一下就是<br>以下情况浏览器会采用标准模式渲染：</p>
-<ul>
-<li>给出了完整的DOCTYPE声明</li>
-<li>DOCTYPE声明了Strict DTD</li>
-<li>DOCTYPE声明了Transitional DTD和URI<br>以下情况浏览器会采用混杂模式渲染：</li>
-<li>DOCTYPE声明了Transitional DTD但未给出URI</li>
-<li>DOCTYPE声明不合法</li>
-<li>未给出DOCTYPE声明</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2170,7 +2124,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">21</span>
+                    <span class="site-state-item-count">22</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2207,7 +2161,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">11</span>
+                      
+                    
+                    <span class="site-state-item-count">12</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>

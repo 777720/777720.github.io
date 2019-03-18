@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.6.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.6.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.6.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.6.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.6.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="数据请求是我们开发中非常重要的一环，如何优雅地进行抽象处理，不是一件很容易的事情，也是经常被忽略的事情，处理不好的话，重复的代码散落在各处，维护成本极高。所以我们需要好好梳理下数据请求涉及到哪些方面，对它有整体的管控，从而设计出扩展性高的方案。 参数配置首先，我们处理下参数的配置，  首先需要防止 CSRF，那我们需要在请求中的 headers 加上 X-XSRF-TOKEN 还需要一个param">
+<meta name="keywords" content="axios 总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="axios封装属于自己业务的请求库总结">
+<meta property="og:url" content="http://yoursite.com/2019/03/18/axios封装属于自己业务的请求库总结/index.html">
+<meta property="og:site_name" content="geek720的日常">
+<meta property="og:description" content="数据请求是我们开发中非常重要的一环，如何优雅地进行抽象处理，不是一件很容易的事情，也是经常被忽略的事情，处理不好的话，重复的代码散落在各处，维护成本极高。所以我们需要好好梳理下数据请求涉及到哪些方面，对它有整体的管控，从而设计出扩展性高的方案。 参数配置首先，我们处理下参数的配置，  首先需要防止 CSRF，那我们需要在请求中的 headers 加上 X-XSRF-TOKEN 还需要一个param">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-18T06:02:21.988Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="axios封装属于自己业务的请求库总结">
+<meta name="twitter:description" content="数据请求是我们开发中非常重要的一环，如何优雅地进行抽象处理，不是一件很容易的事情，也是经常被忽略的事情，处理不好的话，重复的代码散落在各处，维护成本极高。所以我们需要好好梳理下数据请求涉及到哪些方面，对它有整体的管控，从而设计出扩展性高的方案。 参数配置首先，我们处理下参数的配置，  首先需要防止 CSRF，那我们需要在请求中的 headers 加上 X-XSRF-TOKEN 还需要一个param">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/18/axios封装属于自己业务的请求库总结/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>axios封装属于自己业务的请求库总结 | geek720的日常</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">geek720的日常</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">一名不愿透露姓名的程序员</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/18/axios封装属于自己业务的请求库总结/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">axios封装属于自己业务的请求库总结
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-18 14:01:46 / 修改时间：14:02:21" itemprop="dateCreated datePublished" datetime="2019-03-18T14:01:46+08:00">2019-03-18</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>数据请求是我们开发中非常重要的一环，如何优雅地进行抽象处理，不是一件很容易的事情，也是经常被忽略的事情，处理不好的话，重复的代码散落在各处，维护成本极高。<br>所以我们需要好好梳理下数据请求涉及到哪些方面，对它有整体的管控，从而设计出扩展性高的方案。</p>
+<h3 id="参数配置"><a href="#参数配置" class="headerlink" title="参数配置"></a>参数配置</h3><p>首先，我们处理下参数的配置，</p>
+<ul>
+<li>首先需要防止 CSRF，那我们需要在请求中的 headers 加上 X-XSRF-TOKEN</li>
+<li>还需要一个params请求体，请求体需要在post和get请求做一个区分</li>
+<li>除了防止csrf的header配置，如果另外请求有别的配置，比如content-type之类的，需要一个config<br>所以，我们将这一部分，封装成一个request.js文件，并export出几个请求方法，post和get<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import axios from &apos;axios&apos;;</span><br><span class="line"></span><br><span class="line">// The http header that carries the xsrf token value &#123; X-XSRF-TOKEN: &apos;&apos; &#125;</span><br><span class="line">const csrfConfig = &#123;</span><br><span class="line">  &apos;X-XSRF-TOKEN&apos;: &apos;&apos;,</span><br><span class="line">&#125;;</span><br><span class="line">// Build uniform request</span><br><span class="line">async function buildRequest(method, url, params, options) &#123;</span><br><span class="line">  let param = &#123;&#125;;</span><br><span class="line">  let config = &#123;&#125;;</span><br><span class="line">  if (method === &apos;get&apos;) &#123;</span><br><span class="line">    param = &#123; params, ...options &#125;;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    param = JSON.stringify(params);</span><br><span class="line">    config = &#123;</span><br><span class="line">      headers: &#123;</span><br><span class="line">        ...csrfConfig,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;;</span><br><span class="line">    config = Object.assign(&#123;&#125;, config, options);</span><br><span class="line">  &#125;</span><br><span class="line">  return axios[method](url, param, config);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">export const get = (url, params = &#123;&#125;, options) =&gt; buildRequest(&apos;get&apos;, url, params, options);</span><br><span class="line">export const post = (url, params = &#123;&#125;, options) =&gt; buildRequest(&apos;post&apos;, url, params, options);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这样的话，我们对外就暴露出 get 和 post 的方法，其他请求类似，在此只用 get 和 post 作为示例，入参分别是 API地址，数据 和 扩展配置</p>
+<h3 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h3><ul>
+<li>全局异常，也可以说是通用的异常，比如服务端返回503，网络异常，登录失效，无权限等，这些异常是可以预料并可控的，只要和服务端约定好格式，捕获下异常再展示出来即可。</li>
+<li>业务异常，指的是和业务逻辑紧密相关的，比如提交失败，数据校验失败等，这些异常往往每个接口有不一样的情况，而且需要个性化展示错误，所以这部分可能不能进行统一处理，有时候需要把展示错误交到 View 层去实现。<br>之前的方案是在请求中不断地去catch，但是发现这样冗余代码太多，如果这部分异常处理需要抽象出来，则要用到axios 提供的 interceptors 功能，这样可以将异常的处理和核心的请求方法隔离出来，毕竟这部分是要和 UI 进行交互的。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">import axios from &apos;axios&apos;;</span><br><span class="line"></span><br><span class="line">// Add a response interceptor</span><br><span class="line">axios.interceptors.response.use((response) =&gt; &#123;</span><br><span class="line">  const &#123; config, data &#125; = response;</span><br><span class="line">  // 和服务端约定的 Code</span><br><span class="line">  const &#123; code &#125; = data;</span><br><span class="line">  switch (code) &#123;</span><br><span class="line">    case 200:</span><br><span class="line">      return data;</span><br><span class="line">    case 401:</span><br><span class="line">      // 登录失效</span><br><span class="line">      break;</span><br><span class="line">    case 403:</span><br><span class="line">      // 无权限</span><br><span class="line">      break;</span><br><span class="line">    default:</span><br><span class="line">      break;</span><br><span class="line">  &#125;</span><br><span class="line">  if (config.showError) &#123;</span><br><span class="line">    // 接口配置指定需要个性化展示错误</span><br><span class="line">    return Promise.reject(data);</span><br><span class="line">  &#125;</span><br><span class="line">  // 默认展示错误</span><br><span class="line">  // ... Toast error</span><br><span class="line">&#125;, (error) =&gt; &#123;</span><br><span class="line">  // 通用错误</span><br><span class="line">  if (axios.isCancel(error)) &#123;</span><br><span class="line">    // Request cancel</span><br><span class="line">  &#125; else if (navigator &amp;&amp; !navigator.onLine) &#123;</span><br><span class="line">    // Network is disconnect</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // Other error</span><br><span class="line">  &#125;</span><br><span class="line">  return Promise.reject(error);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="请求监控"><a href="#请求监控" class="headerlink" title="请求监控"></a>请求监控</h3><p>请求监控这块和异常处理类似，只不过这里只是记录情况，不涉及到 UI 上的交互或者和业务代码的交互，所以可以把这部分逻辑直接写在异常处理那里，或者在请求后再添加一个拦截器，单独处理。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">axios.interceptors.response.use((response) =&gt; &#123;</span><br><span class="line">  const &#123; status, data, config &#125; = response;</span><br><span class="line">  // 根据返回的数据和接口参数配置，对请求进行埋点</span><br><span class="line">&#125;, (error) =&gt; &#123;</span><br><span class="line">  // 根据返回的数据和接口参数配置，对请求进行埋点</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>好了，到现在为止，参数配置、异常处理 和 请求监控 都设计完了，有三个文件：</p>
+<p>request.js：请求库配置，对外暴露出 get，post 方法。<br>error.js：请求的一些异常处理，涉及到和外面对接的是该接口是否需要个性化展示错误。<br>monitor.js：请求的情况记录，比较独立的一块。</p>
+<p>那在页面上调用的时候可以这样子：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">import &#123; get, post &#125; from &apos;request.js&apos;;</span><br><span class="line"></span><br><span class="line">get(&apos;/user/info&apos;).then((data) =&gt; &#123;&#125;);</span><br><span class="line">post(&apos;/user/update&apos;, &#123; name: &apos;beyondxgb&apos; &#125;, &#123; showError: true &#125;).then((data) =&gt; &#123;</span><br><span class="line">  if (data.code !== 200) &#123;</span><br><span class="line">    // 展示错误</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    // do something</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/axios-总结/" rel="tag"># axios 总结</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/17/在vue下封装echarts公共组件的总结/" rel="next" title="在vue下封装echarts公共组件的总结">
+                <i class="fa fa-chevron-left"></i> 在vue下封装echarts公共组件的总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">geek720</p>
+              <p class="site-description motion-element" itemprop="description">记录日常，谢谢大家</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数配置"><span class="nav-number">1.</span> <span class="nav-text">参数配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异常处理"><span class="nav-number">2.</span> <span class="nav-text">异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求监控"><span class="nav-number">3.</span> <span class="nav-text">请求监控</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">geek720</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v6.6.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.6.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.6.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.6.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.6.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
