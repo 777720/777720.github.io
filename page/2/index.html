@@ -304,6 +304,184 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/08/html5的离线存储的研究（1）——appcache/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/08/html5的离线存储的研究（1）——appcache/" class="post-title-link" itemprop="http://yoursite.com/page/2/index.html">html5的离线存储的研究（1）——appcache</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-08 16:56:51" itemprop="dateCreated datePublished" datetime="2018-12-08T16:56:51+08:00">2018-12-08</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-13 14:53:19" itemprop="dateModified" datetime="2018-12-13T14:53:19+08:00">2018-12-13</time>
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>前几天因为维护的一个vue移动端项目，出现了一个问题，在ios webview下，无论怎么修改都没有更新，后来排查了下原因。是缓存的问题，使用webpack后在每一个js文件后加上了一个hash值。<br>通过这一次的排查，让我对html5的缓存，引发了极大的兴趣。<br>通过网上的查找，我发现，html5的缓存技术新增了有以下两种，一种是localstorage，还有一种是appcache。传统的还有一种是cookie。localstorage的话已经是很熟悉了，在项目中也经常熟练地使用setItem和getItem方法。至于这个appcache不是很熟悉。</p>
+<h2 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h2><p> HTML5引入了这项技术，意味着web应用可进行缓存，并在没有网络的情况下使用。Application Cache带来的三个优势是：</p>
+<ol>
+<li><p>离线浏览</p>
+</li>
+<li><p>提升页面载入速度</p>
+</li>
+<li><p>降低服务器压力</p>
+</li>
+</ol>
+<p>而且主要浏览器皆以支持Application Cache，就算不支持也不会对程序造成什么影响</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>使用appcache的话，需要在index.html下，也就是项目目录下，新建一个类似于cache.manifest的manifest文件并在index.html下的html标签内新增manifest属性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE HTML&gt;</span><br><span class="line">&lt;html manifest = &quot;cache.manifest&quot;&gt;</span><br><span class="line">...</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>总结一下就是在html中引入一个minifest的文件，该文件声明了哪些文件应该被缓存，哪些文件不会被缓存<br>格式如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">CACHE MANIFEST</span><br><span class="line">#v0.11 首次下载后进行缓存的，一般会写版本号</span><br><span class="line"></span><br><span class="line">CACHE:</span><br><span class="line">#需要被缓存的文件</span><br><span class="line">js/app.js</span><br><span class="line">css/style.css</span><br><span class="line"></span><br><span class="line">NETWORK:</span><br><span class="line">#不需要被缓存的文件</span><br><span class="line">resourse/logo.png</span><br><span class="line"></span><br><span class="line">FALLBACK:</span><br><span class="line">#表示如果访问第一个资源失败，那么就使用第二个资源来替换他，比如上面这个文件表示的就是如果访问根目录下任何一个资源失败了，那么就去访问offline.html。</span><br><span class="line">/ /offline.html</span><br></pre></td></tr></table></figure></p>
+<h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><p>1.在cache.manifest下应当写明版本号，并且对本文件不做缓存处理，因为如果服务器对离线资源进行了更新，那么必须更新manifest文件之后这些资源才能被浏览器重新下载，如果只是更新了资源而没有更新manifest文件的话，浏览器并不会重新下载资源，也就是说还是使用原来离线存储的资源。<br>2.如果服务器资源更新了，那么浏览器会一次性下载所有更新资源，如果下载过程中失败，那么这次所有更新都算是失败的。浏览器还会使用以前的资源。</p>
+<ol start="3">
+<li>浏览器会先使用离线资源加载页面，然后再去检查manifest是否有更新，所以需要到下次打开页面才能生效。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从可用性与易用性来说，Application Cache是最好是做静态的公共资源的缓存，尽量不去缓存业务资源。感觉离真正的缓存之路还是比较遥远的。</p>
+<h2 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h2><p>以前查的资料都是大牛以前的博客上看来的，这一次为了看一些api去mdn上观看了官方的解释<a href="https://developer.mozilla.org/zh-CN/docs/Web/HTML/Using_the_application_cache" target="_blank" rel="noopener">https://developer.mozilla.org/zh-CN/docs/Web/HTML/Using_the_application_cache</a></p>
+<blockquote>
+<p><strong>已废弃</strong><br>该特性已经从 Web 标准中删除，虽然一些浏览器目前仍然支持它，但也许会在未来的某个时间停止支持，请尽量不要使用该特性。</p>
+</blockquote>
+<blockquote>
+<p>在此刻使用这里描述的应用程序缓存功能高度不鼓励; 它正在处于从Web平台中被删除的过程。请改用<a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers" target="_blank" rel="noopener">Service Workers</a> 代替。事实上，在Firefox 44中，当AppCache用于为页面提供离线支持时，控制台中现在显示一条警告消息，建议开发人员改用 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers" target="_blank" rel="noopener">Service workers</a> 代替 (<a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1204581" title="FIXED: Add a deprecation notice for AppCache if service worker fetch interception is enabled" target="_blank" rel="noopener">bug 1204581</a>)。<br>所以，尽量不使用啦！</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/08/html-DOCTYPE的深入研究/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1857,188 +2035,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/13/JavaScript的一些思考，es6的解构/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="geek720">
-      <meta itemprop="description" content="记录日常，谢谢大家">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="geek720的日常">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/05/13/JavaScript的一些思考，es6的解构/" class="post-title-link" itemprop="http://yoursite.com/page/2/index.html">JavaScript的一些思考，es6的解构</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-05-13 14:59:06" itemprop="dateCreated datePublished" datetime="2017-05-13T14:59:06+08:00">2017-05-13</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-13 14:59:58" itemprop="dateModified" datetime="2018-12-13T14:59:58+08:00">2018-12-13</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近在工作中遇到了es6的解构的语法，这个语法很有意思，虽然让人在第一时间看不懂你的代码在写什么，而且，语法上面也与我们日常理解的右值赋给左值有点不一样。但是这个语法糖用多了之后，不仅代码量上面少了很多，而且还能在别人面前装一笔。。。。。。</p>
-<hr>
-<h4 id="在解构之前的写法"><a href="#在解构之前的写法" class="headerlink" title="在解构之前的写法"></a>在解构之前的写法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var first = someArray[0];</span><br><span class="line">var second = someArray[1];</span><br><span class="line">var third = someArray[2];</span><br></pre></td></tr></table></figure>
-<h4 id="在解构之后的写法"><a href="#在解构之后的写法" class="headerlink" title="在解构之后的写法"></a>在解构之后的写法</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">const someArr = [1, 2, 3]</span><br><span class="line">const [first, second, third] = someArr</span><br></pre></td></tr></table></figure>
-<h4 id="官方的说法"><a href="#官方的说法" class="headerlink" title="官方的说法"></a>官方的说法</h4><blockquote>
-<p>表达式解构(destructuring)<br>解构允许赋值使用模式匹配,支持数组和对象的匹配.解构是可降级的,类似于标准的对象查找,当匹配失败时返回undefined.</p>
-</blockquote>
-<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><ul>
-<li><p>数组的解构</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">const [ 变量1, 变量2, 变量3, .... ] = 数组1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>对象的解构</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(&#123;a, b&#125; = &#123;a:1, b:2&#125;);</span><br><span class="line">console.log(a); // 1</span><br><span class="line">console.log(b); // 2</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>简单的说，就是 对象字面量和数组字面量提供了一种简单的定义一个特定的数据组的方法。</p>
-<h4 id="初始化：-左值赋给右值"><a href="#初始化：-左值赋给右值" class="headerlink" title="初始化： 左值赋给右值"></a>初始化： 左值赋给右值</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let obj = &#123; first: &apos;Jane&apos;, last: &apos;Doe&apos; &#125;;  </span><br><span class="line">let &#123; first: f, last: l &#125; = obj;</span><br></pre></td></tr></table></figure>
-<p>如果解析出来的值要赋给一个新的变量，那么这个变量要在右边。如果，要赋值的变量名和变量名一样，那么就可以省略这一条了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let obj = &#123; first: &apos;Jane&apos;, last: &apos;Doe&apos; &#125;;  </span><br><span class="line">let &#123; first, last &#125; = obj;</span><br><span class="line">//这是对象解构最基础的用法</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用默认值"><a href="#使用默认值" class="headerlink" title="使用默认值"></a>使用默认值</h4><p>如果你要结构出来的变量，万一没有，那么可以设置个默认值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var a, b;</span><br><span class="line"></span><br><span class="line">[a=5, b=7] = [1];</span><br><span class="line">console.log(a); // 1</span><br><span class="line">console.log(b); // 7</span><br></pre></td></tr></table></figure></p>
-<h4 id="使用扩展操作符-…表达不定参数"><a href="#使用扩展操作符-…表达不定参数" class="headerlink" title="使用扩展操作符 …表达不定参数"></a>使用扩展操作符 …表达不定参数</h4><p>如果说，你不知道你要解构的变量接下来还有什么值，你想把这些不确定的值，全部解构在一个变量上，就可以使用…这个黑科技<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var [head, ...tail] = [1, 2, 3, 4];  </span><br><span class="line">console.log(tail);  </span><br><span class="line"></span><br><span class="line">let obj = &#123; first: &apos;Jane&apos;, last: &apos;Doe&apos; &#125;</span><br><span class="line">let &#123; ...xxx &#125; = obj</span><br><span class="line">console.log(xxx)</span><br></pre></td></tr></table></figure></p>
-<h4 id="一个例子，连续赋值"><a href="#一个例子，连续赋值" class="headerlink" title="一个例子，连续赋值"></a>一个例子，连续赋值</h4><p>接下来是一个找出一个数组中的第一个偶数，并返回<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">function findArray(arr, cb) &#123;</span><br><span class="line">  const result = []</span><br><span class="line">  const indexArray = []</span><br><span class="line">  for (let i = 0; i &lt; arr.length; i++) &#123;</span><br><span class="line">    if (cb(arr[i])) &#123;</span><br><span class="line">      result.push(arr[i])</span><br><span class="line">      indexArray.push(i)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  return &#123; result, indexArray &#125;</span><br><span class="line">&#125;</span><br><span class="line">let arrlist = [21, 4, 5, 6, 7],</span><br><span class="line">  cb = function(ele) &#123;</span><br><span class="line">    return ele % 2 == 0</span><br><span class="line">  &#125;</span><br><span class="line">const &#123; result, indexArray &#125; = findArray(</span><br><span class="line">  arrlist,</span><br><span class="line">  cb,</span><br><span class="line">)</span><br><span class="line">console.log(result)</span><br><span class="line">console.log(indexArray)</span><br></pre></td></tr></table></figure></p>
-<h4 id="反思，应用"><a href="#反思，应用" class="headerlink" title="反思，应用"></a>反思，应用</h4><ul>
-<li>函数可以有多个返回值，解构的语法解构返回值，忽略某些返回值</li>
-<li>交换变量</li>
-<li>正则解析<blockquote>
-<p>下面是网上的一个例子</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">var url =</span><br><span class="line">  &apos;https://developer.mozilla.org/en-US/Web/JavaScript&apos;</span><br><span class="line"></span><br><span class="line">var parsedURL = /^(\w+)\:\/\/([^\/]+)\/(.*)$/.exec(</span><br><span class="line">  url,</span><br><span class="line">)</span><br><span class="line">console.log(parsedURL) // [&quot;https://developer.mozilla.org/en-US/Web/JavaScript&quot;, &quot;https&quot;, &quot;developer.mozilla.org&quot;, &quot;en-US/Web/JavaScript&quot;]</span><br><span class="line"></span><br><span class="line">var [, protocol, fullhost, fullpath] = parsedURL</span><br><span class="line"></span><br><span class="line">console.log(protocol) // &quot;https&quot;</span><br><span class="line"></span><br><span class="line">let &#123; length: len &#125; = &apos;abc&apos; // len = 3</span><br><span class="line">let &#123; toString: s &#125; = 123 // s = Number.prototype.toString</span><br><span class="line">console.log(len)</span><br><span class="line">console.log(s)</span><br></pre></td></tr></table></figure></blockquote>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2086,7 +2082,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">22</span>
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
