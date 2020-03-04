@@ -304,6 +304,156 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/03/04/四种常见的 POST 提交数据方式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="geek720">
+      <meta itemprop="description" content="记录日常，谢谢大家">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="geek720的日常">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2020/03/04/四种常见的 POST 提交数据方式/" class="post-title-link" itemprop="http://yoursite.com/index.html">四种常见的 POST 提交数据方式</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-04 14:55:47 / 修改时间：14:56:22" itemprop="dateCreated datePublished" datetime="2020-03-04T14:55:47+08:00">2020-03-04</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="四种常见的-POST-提交数据方式"><a href="#四种常见的-POST-提交数据方式" class="headerlink" title="四种常见的 POST 提交数据方式"></a>四种常见的 POST 提交数据方式</h1><p>我们知道，HTTP 协议是以 ASCII 码传输，建立在 TCP/IP 协议之上的应用层规范。规范把 HTTP 请求分为三个部分：<del>状态行</del>请求行、请求头、消息主体。类似于下面这样：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">method</span>&gt;</span> <span class="tag">&lt;<span class="name">request-URL</span>&gt;</span> <span class="tag">&lt;<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">headers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">entity-body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>协议规定 POST 提交的数据必须放在消息主体（entity-body）中，但协议并没有规定数据必须使用什么编码方式。实际上，开发者完全可以自己决定消息主体的格式，只要最后发送的 HTTP 请求满足上面的格式就可以。</p>
+<p>服务端通常是根据请求头（Request Headers）中的 Content-Type 字段来获知请求中的消息主体是用何种方式编码，再对主体进行解析。</p>
+<p>POST 提交数据方案，包含了 Content-Type 和消息主体编码方式两部分</p>
+<h3 id="application-x-www-form-urlencoded"><a href="#application-x-www-form-urlencoded" class="headerlink" title="application/x-www-form-urlencoded"></a>application/x-www-form-urlencoded</h3><p>最常见的POST提交数据方式，也是默认常用的方式。如果不设置Content-type属性，就会默认该方式提交数据，并且提交的数据按照 key1=val1&amp;key2=val2 的方式进行编码，key 和 val 都进行了 URL 转码。大部分服务端语言都对这种方式有很好的支持</p>
+<h3 id="multipart-form-data"><a href="#multipart-form-data" class="headerlink" title="multipart/form-data"></a>multipart/form-data</h3><p>上传文件时所用的方式，而且必须让表单的 enctyped等于 multipart/form-data。</p>
+<h3 id="application-json"><a href="#application-json" class="headerlink" title="application/json"></a>application/json</h3><p>这种方式的特点是可以方便的提交复杂的结构化数据</p>
+<h3 id="text-xml"><a href="#text-xml" class="headerlink" title="text/xml"></a>text/xml</h3><p>基本废弃,它是一种使用 HTTP 作为传输协议，XML 作为编码方式的远程调用规范。</p>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/26/书法高效入门攻略/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1868,190 +2018,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/11/html5的离线存储的研究（3）——cookie/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="geek720">
-      <meta itemprop="description" content="记录日常，谢谢大家">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="geek720的日常">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/11/html5的离线存储的研究（3）——cookie/" class="post-title-link" itemprop="http://yoursite.com/index.html">html5的离线存储的研究（3）——cookie</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-11 16:32:44" itemprop="dateCreated datePublished" datetime="2018-12-11T16:32:44+08:00">2018-12-11</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2018-12-13 14:53:05" itemprop="dateModified" datetime="2018-12-13T14:53:05+08:00">2018-12-13</time>
-              
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>最近看了localStorage和appcache，顺带着也研究了下cookie。在localStorage和sessionStorage出来后，感觉cookie已经什么作用了，然鹅我在日常业务中也没怎么使用cookie…….，前端方面使用cookie也只有document.cookie这一个api，感觉使用起来还是简单方便。这里着重记录一下它的注意点。</p>
-<h2 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h2><ul>
-<li>会附加在每个http的请求中，无形中怎加了流量</li>
-<li>http请求中是明文传递的， 安全性成问题。（https除外）</li>
-<li>大小限制在4kb<h2 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h2><blockquote>
-<p>cookie可以跨越一个域名下的多个网页，但不能跨越多个域名使用。</p>
-</blockquote>
-</li>
-</ul>
-<p>也就是说他在<a href="http://www.a.com/index.html和www.a.com/index2.html中是可以共用的，但是在www.a.com和www.b.com下，就不行了。遵循跨域原则。" target="_blank" rel="noopener">www.a.com/index.html和www.a.com/index2.html中是可以共用的，但是在www.a.com和www.b.com下，就不行了。遵循跨域原则。</a></p>
-<blockquote>
-<p>cookie 将信息存储于用户硬盘，它最根本的用途是 Cookie 能够帮助 Web 站点保存有关访问者的信息</p>
-</blockquote>
-<p> 存储于用户硬盘，因此可以作为全局变量，这是它最大的一个优点。但是它是明文传输的，所以不要放一些敏感信息</p>
-<blockquote>
-<p>存储在cookie的数据「每次」都会被浏览器「自动」放在http请求中。</p>
-</blockquote>
-<p>浏览器有一个自主行为，就是会自动将该url下的cookie带入到request header中，这就很尴尬了，所以服务端在使用cookie的时候要时刻注意，那些有用的信息要放入，哪些无用的信息就避免放入，不然会增加带宽， 影响性能，前端上如果使用axios发送请求，在不需要带上cookie的时候，可以设置withCredentialse为true， jquery同理。</p>
-<h2 id="使用流程"><a href="#使用流程" class="headerlink" title="使用流程"></a>使用流程</h2><h4 id="1-起作用"><a href="#1-起作用" class="headerlink" title="1.起作用"></a>1.起作用</h4><p> cookie 是存在用户硬盘中，用户每次访问站点时，Web应用程序都可以读取 Cookie 包含的信息。当用户再次访问这个站点时，浏览器就会在本地硬盘上查找与该 URL 相关联的 Cookie。如果该 Cookie 存在，浏览器就将它添加到request header的Cookie字段中，与http请求一起发送到该站点。<br><img src="https://upload-images.jianshu.io/upload_images/2204576-a0843bf40e52e570.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="721543713-56fba554cad37_articlex.png"></p>
-<h4 id="2-cookie的格式"><a href="#2-cookie的格式" class="headerlink" title="2. cookie的格式"></a>2. cookie的格式</h4><p>浏览器提供了 cookie 属性给 JavaScript，因此可以通过 document.cookie 来访问这个页面中的cookie。<br><img src="https://upload-images.jianshu.io/upload_images/2204576-1f65b5714a4f2b18.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="cookie的格式"></p>
-<p>这是一串字符串，仔细观察，我们可以发现规律。每个 cookie 都以名/值对的形式，即 name=value，名称和值都必须是URL编码的，且两对cookie间以分号和空格隔开。（ps：千万不要忘了空格，特别是在获取某个 cookie 时）</p>
-<p>如果手动添加几个的话就是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// document.cookie = &quot;name=value[; expires=GMTDate][; domain=domain][; path=path][; secure]&quot;</span><br><span class="line">document.cookie = &quot;test1=myCookie1;&quot;</span><br><span class="line">document.cookie = &quot;test2=myCookie2; domain=.google.com.hk; path=/webhp&quot;</span><br><span class="line">document.cookie = &quot;test3=myCookie3; domain=.google.com.hk; expires=Sat, 04 Nov 2017 16:00:00 GMT; secure&quot;</span><br><span class="line">document.cookie = &quot;test4=myCookie4; domain=.google.com.hk; max-age=10800;&quot;</span><br></pre></td></tr></table></figure></p>
-<p>domain、Path、Expries/Max-age、httponly(即HTTP选项）、Secure 等均是 cookie 的属性，</p>
-<ol>
-<li>domain、path： 指定cookie在哪些域中共享</li>
-<li>Expries/Max-age：失效时间和失效时间段， 前者规定一个gmt时间，Sat, 04 Nov 2017 16:00:00 GMT，这表明这个 cookie 将在2017-11-04的16时整失效，而后者是一个时间段，例如max-age=10800;”，也就是生效时间是3个小时， 新的http协议已经使用这个字段替换了expries</li>
-<li>secure： secure是 cookie 的安全标志，通过cookie直接包含一个secure单词来指定，也是cookie中唯一一个非名值对儿的部分。指定后，cookie只有在使用SSL连接（如HTTPS请求）时才会发送到服务器。<br>默认情况为空，不指定 secure 选项，即不论是 http 请求还是 https 请求，均会发送cookie。</li>
-<li>httponly：httponly属性是用来限制客户端脚本对cookie的访问。将 cookie 设置成 httponly 可以减轻xss攻击的危害，防止cookie被窃取，以增强cookie的安全性。（由于cookie中可能存放身份验证信息，放在cookie中容易泄露），如果设置了httponly，js是无法读取和修改 httponly cookies，当然也不能设置 cookie 为 httponly，这只能通过服务器端去设置。默认情况是不指定 httponly，即可以通过 js 去访问。</li>
-</ol>
-<h4 id="cookie编码"><a href="#cookie编码" class="headerlink" title="cookie编码"></a>cookie编码</h4><p>感觉没啥乱用，但还是记录下，简单的就是在关键value上加上encodeURIComponent<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.cookie = encodeURIComponent(&quot;test&quot;) + &quot;=&quot; + encodeURIComponent(&quot;myCookie&quot;) + &quot;; max-age=3600&quot;;</span><br></pre></td></tr></table></figure></p>
-<h4 id="cookie删除，修改"><a href="#cookie删除，修改" class="headerlink" title="cookie删除，修改"></a>cookie删除，修改</h4><p>cookie的删除其实特别简单，也是对此cookie重新赋值，将expries设为一个过去的时间或将max-age设为0，都可以删除cookie。同时也要特别注意此cookie的domain、path要与原来保持一致</p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-       
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2099,7 +2065,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-count">25</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2140,7 +2106,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">13</span>
+                      
+                    
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">标签</span>
                   
                 </div>
